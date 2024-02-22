@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Setting up a single user XFCE environment for FreeBSD | 127.0.0.1</title>
+<link href="../../assets/css/baguetteBox.min.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/rst_base.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/nikola_rst.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/theme.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+<link href="../../assets/css/custom.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://zhgoh.github.io/posts/setting-up-a-single-user-xfce-environment-for-freebsd/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="zhgoh">
+<link rel="prev" href="../tisc-ctf-challenge-2020/" title="TISC CTF challenge 2020" type="text/html">
+<link rel="next" href="../trying-out-a-new-light-theme/" title="Trying out a new light theme" type="text/html">
+<meta property="og:site_name" content="127.0.0.1">
+<meta property="og:title" content="Setting up a single user XFCE environment for FreeBSD">
+<meta property="og:url" content="https://zhgoh.github.io/posts/setting-up-a-single-user-xfce-environment-for-freebsd/">
+<meta property="og:description" content="Recently I wanted to install XFCE on an old laptop of mine for someone who was not very familiar with the command line interface. I had
+previously installed a tiling manager but I think having a deskt">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-09-15T22:30:59+08:00">
+</head>
+<body>
+    <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+    <div id="container">
+         
+    <header id="header"><h1 id="brand"><a href="https://zhgoh.github.io/" title="127.0.0.1" rel="home">
+
+        <span id="blog-title">127.0.0.1</span>
+    </a></h1>
+
+        
+
+        
+    <nav id="menu"><ul>
+<li><a href="../../pages/about/index.html">About</a></li>
+                <li><a href="../../index.html">Blog</a></li>
+                <li><a href="../../pages/projects/index.html">Projects</a></li>
+
+    
+
+    
+    
+    </ul></nav></header><main id="content"><article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Setting up a single user XFCE environment for FreeBSD</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
+                    zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="." rel="bookmark">
+            <time class="published dt-published" datetime="2020-09-15T22:30:59+08:00" itemprop="datePublished" title="15 Sep 2020">15 Sep 2020</time></a>
+            </p>
+            
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>Recently I wanted to install XFCE on an old laptop of mine for someone who was not very familiar with the command line interface. I had
+previously installed a tiling manager but I think having a desktop environment will be more user friendly. In addition, there will most likely
+be the only person using the machine so I decided to set it up that way.</p>
+<p>This are my notes on how to set up the xfce desktop environment, feel free to install your own desktop environment of choice. This guide will
+assume that you have just installed FreeBSD with a user which is (at least) added to the operator group. I am also using tcsh as my login
+shell.</p>
+<section id="steps"><h2>Steps</h2>
+<ol class="arabic simple">
+<li><p>Install xfce</p></li>
+<li><p>Enable shutdown option in xfce</p></li>
+<li><p>Enable autologin to xfce</p></li>
+</ol>
+<section id="install-xfce"><h3>1. Install xfce</h3>
+<p>Proceed to install xfce or your desktop environment of choice. Before that, ensure that Xorg is also installed.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_bcaae36dede5403b85cbfc92dda265b4-1" name="rest_code_bcaae36dede5403b85cbfc92dda265b4-1" href="#rest_code_bcaae36dede5403b85cbfc92dda265b4-1"></a>$<span class="w"> </span>doas<span class="w"> </span>pkg<span class="w"> </span>update
+<a id="rest_code_bcaae36dede5403b85cbfc92dda265b4-2" name="rest_code_bcaae36dede5403b85cbfc92dda265b4-2" href="#rest_code_bcaae36dede5403b85cbfc92dda265b4-2"></a>$<span class="w"> </span>doas<span class="w"> </span>pkg<span class="w"> </span>install<span class="w"> </span>xorg<span class="w"> </span>xfce
+</pre></div>
+</section><section id="enable-shutdown-option-in-xfce"><h3>2. Enable shutdown option in xfce</h3>
+<p>By default, after you install xfce and start the xfce, one thing you will notice is that when you click on your name, there is only an option
+for logout. Shutdown/restart/hibernate seems to be grayed out. To enable the buttons, you will have to do the following.</p>
+<ul class="simple">
+<li><p>Make sure myuser is in group operator</p></li>
+<li><p>Enable dbus in rc.conf</p></li>
+<li><p>Adding rules in polkit</p></li>
+</ul>
+<section id="make-sure-myuser-is-in-group-operator"><h4>Make sure myuser is in group operator</h4>
+<p>Make sure myuser using the desktop environment is in group operator. This can be checked with the following command,</p>
+<div class="code"><pre class="code shell"><a id="rest_code_bf101ccbd1694298af6f0d0e0e3fbb3b-1" name="rest_code_bf101ccbd1694298af6f0d0e0e3fbb3b-1" href="#rest_code_bf101ccbd1694298af6f0d0e0e3fbb3b-1"></a>$<span class="w"> </span>id<span class="w"> </span>myuser
+<a id="rest_code_bf101ccbd1694298af6f0d0e0e3fbb3b-2" name="rest_code_bf101ccbd1694298af6f0d0e0e3fbb3b-2" href="#rest_code_bf101ccbd1694298af6f0d0e0e3fbb3b-2"></a><span class="nv">uid</span><span class="o">=</span><span class="m">1001</span><span class="o">(</span>myuser<span class="o">)</span><span class="w"> </span><span class="nv">gid</span><span class="o">=</span><span class="m">1001</span><span class="o">(</span>myuser<span class="o">)</span><span class="w"> </span><span class="nv">groups</span><span class="o">=</span><span class="m">1001</span><span class="o">(</span>myuser<span class="o">)</span>,5<span class="o">(</span>operator<span class="o">)</span>
+</pre></div>
+<p>Otherwise if myuser is not in the group, use the following to add it to the group,</p>
+<div class="code"><pre class="code shell"><a id="rest_code_08304024b94e4136bd8cccd566e718f9-1" name="rest_code_08304024b94e4136bd8cccd566e718f9-1" href="#rest_code_08304024b94e4136bd8cccd566e718f9-1"></a>$<span class="w"> </span>doas<span class="w"> </span>pw<span class="w"> </span>groupmod<span class="w"> </span>operator<span class="w"> </span>-m<span class="w"> </span>myuser
+</pre></div>
+<p>Verify it again using the id command.</p>
+</section><section id="enable-dbus-in-rc-conf"><h4>Enable dbus in rc.conf</h4>
+<p>D-Bus is installed as part of the xfce package according to the FreeBSD <a class="reference external" href="https://www.freebsd.org/doc/handbook/x11-wm.html">handbook</a> and can be
+enabled in your rc.conf by adding the following line to your rc.conf.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_247470c5bce64fb6bf40b5a6b3e2e6e9-1" name="rest_code_247470c5bce64fb6bf40b5a6b3e2e6e9-1" href="#rest_code_247470c5bce64fb6bf40b5a6b3e2e6e9-1"></a>$<span class="w"> </span>doas<span class="w"> </span>sysrc<span class="w"> </span><span class="nv">dbus_enable</span><span class="o">=</span><span class="s2">"YES"</span>
+</pre></div>
+</section><section id="adding-rules-in-polkit"><h4>Adding rules in polkit</h4>
+<p>Add a new rule to polkit, assuming shutdown.rules does not exist,</p>
+<div class="code"><pre class="code shell"><a id="rest_code_53d1d3ccaf7743d284a4770294a699a3-1" name="rest_code_53d1d3ccaf7743d284a4770294a699a3-1" href="#rest_code_53d1d3ccaf7743d284a4770294a699a3-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/usr/local/etc/polkit-1/rules.d
+<a id="rest_code_53d1d3ccaf7743d284a4770294a699a3-2" name="rest_code_53d1d3ccaf7743d284a4770294a699a3-2" href="#rest_code_53d1d3ccaf7743d284a4770294a699a3-2"></a>$<span class="w"> </span>doas<span class="w"> </span>touch<span class="w"> </span>shutdown.rules
+</pre></div>
+<p>Paste the contents below to the file shutdown.rules</p>
+<div class="code"><pre class="code shell"><a id="rest_code_8f42c9c502134ce8b72a76206857f927-1" name="rest_code_8f42c9c502134ce8b72a76206857f927-1" href="#rest_code_8f42c9c502134ce8b72a76206857f927-1"></a><span class="c1"># shutdown.rules</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-2" name="rest_code_8f42c9c502134ce8b72a76206857f927-2" href="#rest_code_8f42c9c502134ce8b72a76206857f927-2"></a>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-3" name="rest_code_8f42c9c502134ce8b72a76206857f927-3" href="#rest_code_8f42c9c502134ce8b72a76206857f927-3"></a>polkit.addRule<span class="o">(</span><span class="k">function</span><span class="w"> </span><span class="o">(</span>action,<span class="w"> </span>subject<span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-4" name="rest_code_8f42c9c502134ce8b72a76206857f927-4" href="#rest_code_8f42c9c502134ce8b72a76206857f927-4"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">((</span>action.id<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"org.freedesktop.consolekit.system.restart"</span><span class="w"> </span><span class="o">||</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-5" name="rest_code_8f42c9c502134ce8b72a76206857f927-5" href="#rest_code_8f42c9c502134ce8b72a76206857f927-5"></a><span class="w">  </span>action.id<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"org.freedesktop.consolekit.system.stop"</span><span class="o">)</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-6" name="rest_code_8f42c9c502134ce8b72a76206857f927-6" href="#rest_code_8f42c9c502134ce8b72a76206857f927-6"></a><span class="w">  </span><span class="o">&amp;&amp;</span><span class="w"> </span>subject.isInGroup<span class="o">(</span><span class="s2">"operator"</span><span class="o">))</span><span class="w"> </span><span class="o">{</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-7" name="rest_code_8f42c9c502134ce8b72a76206857f927-7" href="#rest_code_8f42c9c502134ce8b72a76206857f927-7"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span>polkit.Result.YES<span class="p">;</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-8" name="rest_code_8f42c9c502134ce8b72a76206857f927-8" href="#rest_code_8f42c9c502134ce8b72a76206857f927-8"></a><span class="w">  </span><span class="o">}</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-9" name="rest_code_8f42c9c502134ce8b72a76206857f927-9" href="#rest_code_8f42c9c502134ce8b72a76206857f927-9"></a><span class="o">})</span><span class="p">;</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-10" name="rest_code_8f42c9c502134ce8b72a76206857f927-10" href="#rest_code_8f42c9c502134ce8b72a76206857f927-10"></a>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-11" name="rest_code_8f42c9c502134ce8b72a76206857f927-11" href="#rest_code_8f42c9c502134ce8b72a76206857f927-11"></a>polkit.addRule<span class="o">(</span><span class="k">function</span><span class="w"> </span><span class="o">(</span>action,<span class="w"> </span>subject<span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-12" name="rest_code_8f42c9c502134ce8b72a76206857f927-12" href="#rest_code_8f42c9c502134ce8b72a76206857f927-12"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">(</span>action.id<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"org.freedesktop.consolekit.system.suspend"</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-13" name="rest_code_8f42c9c502134ce8b72a76206857f927-13" href="#rest_code_8f42c9c502134ce8b72a76206857f927-13"></a><span class="w">  </span><span class="o">&amp;&amp;</span><span class="w"> </span>subject.isInGroup<span class="o">(</span><span class="s2">"operator"</span><span class="o">))</span><span class="w"> </span><span class="o">{</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-14" name="rest_code_8f42c9c502134ce8b72a76206857f927-14" href="#rest_code_8f42c9c502134ce8b72a76206857f927-14"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span>polkit.Result.YES<span class="p">;</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-15" name="rest_code_8f42c9c502134ce8b72a76206857f927-15" href="#rest_code_8f42c9c502134ce8b72a76206857f927-15"></a><span class="w">  </span><span class="o">}</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-16" name="rest_code_8f42c9c502134ce8b72a76206857f927-16" href="#rest_code_8f42c9c502134ce8b72a76206857f927-16"></a><span class="o">})</span><span class="p">;</span>
+</pre></div>
+<p>Reboot your FreeBSD.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_6e19870340ce47de9b726b50faa79ffa-1" name="rest_code_6e19870340ce47de9b726b50faa79ffa-1" href="#rest_code_6e19870340ce47de9b726b50faa79ffa-1"></a>$<span class="w"> </span>doas<span class="w"> </span>shutdown<span class="w"> </span>-r<span class="w"> </span>now
+</pre></div>
+<p>Log into myuser and start xfce.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_8343f830720c400d8ae8198e175dded0-1" name="rest_code_8343f830720c400d8ae8198e175dded0-1" href="#rest_code_8343f830720c400d8ae8198e175dded0-1"></a>$<span class="w"> </span>startxfce4
+</pre></div>
+<p>When clicking log out, the shutdown/restart should be enabled now instead of greyed out.</p>
+<img alt="/images/setting-up-xfce-environment-for-single-user_0.PNG" src="../../images/setting-up-xfce-environment-for-single-user_0.PNG"><p>Next we are going to set up auto login for myuser.</p>
+</section></section><section id="enable-autologin-to-xfce"><h3>3. Enable autologin to xfce</h3>
+<p>Firstly we copy startxfce4 script to the user's home .xinitrc.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_e85950f1e7bd4ceeac029129adc63dca-1" name="rest_code_e85950f1e7bd4ceeac029129adc63dca-1" href="#rest_code_e85950f1e7bd4ceeac029129adc63dca-1"></a>$<span class="w"> </span>cp<span class="w"> </span>/usr/local/bin/startxfce4<span class="w"> </span>~/.xinitrc
+</pre></div>
+<p>Next we will edit /etc/gettytab</p>
+<div class="code"><pre class="code shell"><a id="rest_code_137b24f0453d476cbcee3129d83bd640-1" name="rest_code_137b24f0453d476cbcee3129d83bd640-1" href="#rest_code_137b24f0453d476cbcee3129d83bd640-1"></a>$<span class="w"> </span>doas<span class="w"> </span>vi<span class="w"> </span>/etc/gettytab
+</pre></div>
+<p>And add the following into /etc/gettytab</p>
+<div class="code"><pre class="code shell"><a id="rest_code_d32485d39fac47c1ba4931ffced0c8f1-1" name="rest_code_d32485d39fac47c1ba4931ffced0c8f1-1" href="#rest_code_d32485d39fac47c1ba4931ffced0c8f1-1"></a>Al<span class="p">|</span>Autologin<span class="w"> </span>myuser:<span class="se">\</span>
+<a id="rest_code_d32485d39fac47c1ba4931ffced0c8f1-2" name="rest_code_d32485d39fac47c1ba4931ffced0c8f1-2" href="#rest_code_d32485d39fac47c1ba4931ffced0c8f1-2"></a><span class="w">   </span>:al<span class="o">=</span>myuser:tc<span class="o">=</span>Pc:
+</pre></div>
+<p>Next we will edit /etc/ttys</p>
+<div class="code"><pre class="code shell"><a id="rest_code_3c7a3cb931ec4d668df3d772f1f20f83-1" name="rest_code_3c7a3cb931ec4d668df3d772f1f20f83-1" href="#rest_code_3c7a3cb931ec4d668df3d772f1f20f83-1"></a>$<span class="w"> </span>doas<span class="w"> </span>vi<span class="w"> </span>/etc/ttys
+</pre></div>
+<p>And change the following lines into /etc/ttys, from</p>
+<div class="code"><pre class="code shell"><a id="rest_code_772a2836531d41d3ab4ad66c9862d6f9-1" name="rest_code_772a2836531d41d3ab4ad66c9862d6f9-1" href="#rest_code_772a2836531d41d3ab4ad66c9862d6f9-1"></a>ttyv0<span class="w">    </span><span class="s2">"/usr/libexec/getty Pc"</span><span class="w">   </span>xterm<span class="w">   </span>onifexists<span class="w">  </span>secure
+</pre></div>
+<p>to the following</p>
+<div class="code"><pre class="code shell"><a id="rest_code_c5b79b6102204802806f14be1633edc4-1" name="rest_code_c5b79b6102204802806f14be1633edc4-1" href="#rest_code_c5b79b6102204802806f14be1633edc4-1"></a>ttyv0<span class="w">    </span><span class="s2">"/usr/libexec/getty Al"</span><span class="w">   </span>xterm<span class="w">   </span>onifexists<span class="w">  </span>secure
+</pre></div>
+<p>When you have completed the above, your FreeBSD should be able to login automatically to myuser after you reboot. You can verify by rebooting,</p>
+<div class="code"><pre class="code shell"><a id="rest_code_dfbe6b13d620420b933596d33127f0e7-1" name="rest_code_dfbe6b13d620420b933596d33127f0e7-1" href="#rest_code_dfbe6b13d620420b933596d33127f0e7-1"></a>$<span class="w"> </span>doas<span class="w"> </span>shutdown<span class="w"> </span>-r<span class="w"> </span>now
+</pre></div>
+<p>and when you see myuser logged in automatically, the configuration is correct. Now the final step is to add a .login script to execute
+automatically whenever we are logged in.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_1fa33210f87a4e67ae536de353dbcb0d-1" name="rest_code_1fa33210f87a4e67ae536de353dbcb0d-1" href="#rest_code_1fa33210f87a4e67ae536de353dbcb0d-1"></a>$<span class="w"> </span>vi<span class="w"> </span>.login
+</pre></div>
+<p>and add the following lines, (note: I am using tcsh as my shell for myuser, change the script accordingly to suit your shell)</p>
+<div class="code"><pre class="code shell"><a id="rest_code_817db086b55647898bdfe11dde1e2220-1" name="rest_code_817db086b55647898bdfe11dde1e2220-1" href="#rest_code_817db086b55647898bdfe11dde1e2220-1"></a><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="nv">$tty</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"ttyv0"</span><span class="o">)</span><span class="w"> </span><span class="k">then</span>
+<a id="rest_code_817db086b55647898bdfe11dde1e2220-2" name="rest_code_817db086b55647898bdfe11dde1e2220-2" href="#rest_code_817db086b55647898bdfe11dde1e2220-2"></a><span class="w">  </span><span class="nb">echo</span><span class="w"> </span>Starting<span class="w"> </span>xfce...
+<a id="rest_code_817db086b55647898bdfe11dde1e2220-3" name="rest_code_817db086b55647898bdfe11dde1e2220-3" href="#rest_code_817db086b55647898bdfe11dde1e2220-3"></a><span class="w">  </span>startx
+<a id="rest_code_817db086b55647898bdfe11dde1e2220-4" name="rest_code_817db086b55647898bdfe11dde1e2220-4" href="#rest_code_817db086b55647898bdfe11dde1e2220-4"></a>endif
+</pre></div>
+<p>Afterwards, you can test if the .login script works by logging out.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_4a56c2ca4f014227919f0416ad4f5202-1" name="rest_code_4a56c2ca4f014227919f0416ad4f5202-1" href="#rest_code_4a56c2ca4f014227919f0416ad4f5202-1"></a>$<span class="w"> </span><span class="nb">exit</span>
+</pre></div>
+<p>This will let it logout and because of the autologin behavior, it should log back into myuser and run the .login script. If the all else
+succeed, you will be able to see a xfce environment with shutdown/restart/suspend buttons working.</p>
+<p>Here are a list of resources that I got my scripts and configurations from</p>
+<p>FreeBSD Handbook</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.freebsd.org/doc/handbook/x11-wm.html">x11-wm</a></p></li>
+</ul>
+<p>FreeBSD Forums</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://forums.freebsd.org/threads/display-manager.47305/#post-264818">Display Manager</a></p></li>
+<li><p><a class="reference external" href="https://forums.freebsd.org/threads/trouble-calling-startx-in-start-up-script.22304/#post-125787">Trouble calling 'startx' in Start-Up script</a></p></li>
+<li><p><a class="reference external" href="https://forums.freebsd.org/threads/xfce4-no-abiltiy-to-shutdown-and-reboot-that-went-away.72671/">xfce4 no abiltiy to shutdown and reboot that went away</a></p></li>
+</ul></section></section>
+</div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../tisc-ctf-challenge-2020/" rel="prev" title="TISC CTF challenge 2020">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../trying-out-a-new-light-theme/" rel="next" title="Trying out a new light theme">Next post</a>
+            </li>
+        </ul></nav></aside></article></main><footer id="footer"><div>
+                <a href="mailto:zihe.goh@gmail.com">
+                    <i class="fas fa-lg fa-at"></i>
+                </a>
+
+                <a href="https://github.com/zhgoh" target="_blank">
+                    <i class="fab fa-lg fa-github-alt"></i>
+                </a>
+
+                <a href="https://gitlab.com/zhgoh" target="_blank">
+                    <i class="fab fa-lg fa-gitlab"></i>
+                </a>
+
+                <a href="https://www.linkedin.com/in/zihegoh/" target="blank">
+                    <i class="fab fa-lg fa-linkedin"></i>
+                </a>
+
+                <a href="/Zi%20He_CV.pdf">
+                    <i class="fas fa-lg fa-file-pdf"></i>
+                </a>
+            </div>
+
+            <div>
+                <p>© 2024         <a href="mailto:zihe.goh@gmail.com">zhgoh</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            </div>
+            
+        </footer>
+</div>
+    
+            <script src="../../assets/js/baguetteBox.min.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

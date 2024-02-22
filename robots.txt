@@ -1,0 +1,4 @@
+Sitemap: https://zhgoh.github.io/sitemapindex.xml
+
+User-Agent: *
+Host: zhgoh.github.io

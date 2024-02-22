@@ -1,0 +1,101 @@
+/* Palette https://lospec.com/palette-list/pencil-sketch */
+
+body {
+  background-color: #fffff7;
+  color: #0a030d;
+}
+
+#container {
+  max-width: 100em;
+}
+
+#brand {
+  height: 1em;
+  text-align: center;
+}
+
+#header {
+  text-align: center;
+  border-bottom: 0em;
+}
+
+#content {
+  padding: 0.625em;
+}
+
+#menu {
+  text-align: center;
+  padding-left: 2%;
+}
+
+.postpromonav {
+  border-bottom: 0em;
+  border-top: 0em;
+}
+
+.postindex article {
+ border-bottom: 0em;
+ padding-bottom: 1em;
+ text-align: left;
+}
+
+h1 {
+  color: #0a030d;
+  height: 0.5em;
+  font-size: 2.0em;
+}
+
+h2 {
+  color: #0a030d;
+  height: 0.5em;
+  font-size: 1.0em;
+}
+
+h3 {
+  color: #0a030d;
+  height: 0.5em;
+  font-size: 0.98em;
+}
+
+h4 {
+  color: #0a030d;
+  height: 0.5em;
+  font-size: 0.96em;
+}
+
+h5 {
+  color: #0a030d;
+  height: 0.5em;
+  font-size: 0.94em;
+}
+
+h6 {
+  color: #0a030d;
+  height: 0.5em;
+  font-size: 0.92em;
+}
+
+a, a:visited, :link, :link:visited {
+  color: #87847f;
+}
+
+#footer {
+  border-top: 0em;
+  margin-left: 35%;
+  margin-right: 35%;
+}
+
+#footer div {
+  margin-top: 0em;
+  margin-bottom: 0em;
+  text-align: center;
+}
+
+#footer p {
+  margin-top: 0em;
+}
+
+.entry-title {
+  font-size: 1.0em;
+  display: contents;
+}

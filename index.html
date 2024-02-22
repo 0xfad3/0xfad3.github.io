@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="My general thoughts on game dev and coding">
+<meta name="viewport" content="width=device-width">
+<title>127.0.0.1</title>
+<link href="assets/css/baguetteBox.min.css" rel="stylesheet" type="text/css">
+<link href="assets/css/rst_base.css" rel="stylesheet" type="text/css">
+<link href="assets/css/nikola_rst.css" rel="stylesheet" type="text/css">
+<link href="assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="assets/css/theme.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+<link href="assets/css/custom.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="rss.xml">
+<link rel="canonical" href="https://zhgoh.github.io/">
+<link rel="next" href="index-5.html" type="text/html">
+<!--[if lt IE 9]><script src="assets/js/html5shiv-printshiv.min.js"></script><![endif]--><link rel="prefetch" href="posts/single-pass-mean-and-standard-deviation-questions/" type="text/html">
+</head>
+<body>
+    <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+    <div id="container">
+         
+    <header id="header"><h1 id="brand"><a href="https://zhgoh.github.io/" title="127.0.0.1" rel="home">
+
+        <span id="blog-title">127.0.0.1</span>
+    </a></h1>
+
+        
+
+        
+    <nav id="menu"><ul>
+<li><a href="pages/about/index.html">About</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="pages/projects/index.html">Projects</a></li>
+
+    
+
+    
+    
+    </ul></nav></header><main id="content"><div class="postindex">
+    <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/single-pass-mean-and-standard-deviation-questions/" class="u-url">Single pass mean and standard deviation questions</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/single-pass-mean-and-standard-deviation-questions/" rel="bookmark">
+            <time class="published dt-published" datetime="2022-04-21T16:36:36+08:00" itemprop="datePublished" title="21 Apr 2022">21 Apr 2022</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>Recently I have came across an interview question that is quite interesting which asked for the computation of math operations like
+mean, standard deviation in a most effective manner.</p>
+<section id="question">
+<h2>Question</h2>
+<p>The original question was something like this, given a list of numbers, design a solution that is able to support adding of new numbers and,</p>
+<ol class="arabic simple">
+<li><p>Get the current mean.</p></li>
+<li><p>Get the standard deviation.</p></li>
+</ol>
+<p>In case you are still wondering, the restrictions for the solution have to be as optimized as possible, in terms of space and computations, that means
+our solution will not store the original numbers when we add it. I will briefly discuss the solution to part 1 and move to our topic of discuss about 2.</p>
+</section>
+<section id="snippet">
+<h2>Snippet</h2>
+<p>We can assume the snippet below is provided for us to work on.</p>
+<div class="code"><pre class="code python"><a id="rest_code_f058327dc6014e0491281a1af788dc77-1" name="rest_code_f058327dc6014e0491281a1af788dc77-1" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_f058327dc6014e0491281a1af788dc77-1"></a><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
+<a id="rest_code_f058327dc6014e0491281a1af788dc77-2" name="rest_code_f058327dc6014e0491281a1af788dc77-2" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_f058327dc6014e0491281a1af788dc77-2"></a>  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="rest_code_f058327dc6014e0491281a1af788dc77-3" name="rest_code_f058327dc6014e0491281a1af788dc77-3" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_f058327dc6014e0491281a1af788dc77-3"></a>    <span class="k">pass</span>
+<a id="rest_code_f058327dc6014e0491281a1af788dc77-4" name="rest_code_f058327dc6014e0491281a1af788dc77-4" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_f058327dc6014e0491281a1af788dc77-4"></a>
+<a id="rest_code_f058327dc6014e0491281a1af788dc77-5" name="rest_code_f058327dc6014e0491281a1af788dc77-5" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_f058327dc6014e0491281a1af788dc77-5"></a>  <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="rest_code_f058327dc6014e0491281a1af788dc77-6" name="rest_code_f058327dc6014e0491281a1af788dc77-6" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_f058327dc6014e0491281a1af788dc77-6"></a>    <span class="k">pass</span>
+<a id="rest_code_f058327dc6014e0491281a1af788dc77-7" name="rest_code_f058327dc6014e0491281a1af788dc77-7" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_f058327dc6014e0491281a1af788dc77-7"></a>
+<a id="rest_code_f058327dc6014e0491281a1af788dc77-8" name="rest_code_f058327dc6014e0491281a1af788dc77-8" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_f058327dc6014e0491281a1af788dc77-8"></a>  <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="rest_code_f058327dc6014e0491281a1af788dc77-9" name="rest_code_f058327dc6014e0491281a1af788dc77-9" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_f058327dc6014e0491281a1af788dc77-9"></a>    <span class="k">pass</span>
+<a id="rest_code_f058327dc6014e0491281a1af788dc77-10" name="rest_code_f058327dc6014e0491281a1af788dc77-10" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_f058327dc6014e0491281a1af788dc77-10"></a>
+<a id="rest_code_f058327dc6014e0491281a1af788dc77-11" name="rest_code_f058327dc6014e0491281a1af788dc77-11" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_f058327dc6014e0491281a1af788dc77-11"></a>  <span class="k">def</span> <span class="nf">std_dev</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="rest_code_f058327dc6014e0491281a1af788dc77-12" name="rest_code_f058327dc6014e0491281a1af788dc77-12" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_f058327dc6014e0491281a1af788dc77-12"></a>    <span class="k">pass</span>
+</pre></div>
+</section>
+<section id="solutions">
+<h2>Solutions</h2>
+<section id="part-1">
+<h3>Part 1</h3>
+<section id="initial-design-brute-force">
+<h4>Initial Design: Brute force</h4>
+<p>My initial design was to store a list of numbers as I add them and computing the mean is simply looping through all elements and dividing them by them
+by the len of the list.</p>
+<div class="code"><pre class="code python"><a id="rest_code_4453f6602c7b4b4983b116ce60dd641a-1" name="rest_code_4453f6602c7b4b4983b116ce60dd641a-1" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_4453f6602c7b4b4983b116ce60dd641a-1"></a><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
+<a id="rest_code_4453f6602c7b4b4983b116ce60dd641a-2" name="rest_code_4453f6602c7b4b4983b116ce60dd641a-2" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_4453f6602c7b4b4983b116ce60dd641a-2"></a>  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="rest_code_4453f6602c7b4b4983b116ce60dd641a-3" name="rest_code_4453f6602c7b4b4983b116ce60dd641a-3" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_4453f6602c7b4b4983b116ce60dd641a-3"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">numbers</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="rest_code_4453f6602c7b4b4983b116ce60dd641a-4" name="rest_code_4453f6602c7b4b4983b116ce60dd641a-4" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_4453f6602c7b4b4983b116ce60dd641a-4"></a>
+<a id="rest_code_4453f6602c7b4b4983b116ce60dd641a-5" name="rest_code_4453f6602c7b4b4983b116ce60dd641a-5" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_4453f6602c7b4b4983b116ce60dd641a-5"></a>  <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="rest_code_4453f6602c7b4b4983b116ce60dd641a-6" name="rest_code_4453f6602c7b4b4983b116ce60dd641a-6" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_4453f6602c7b4b4983b116ce60dd641a-6"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">numbers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+<a id="rest_code_4453f6602c7b4b4983b116ce60dd641a-7" name="rest_code_4453f6602c7b4b4983b116ce60dd641a-7" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_4453f6602c7b4b4983b116ce60dd641a-7"></a>
+<a id="rest_code_4453f6602c7b4b4983b116ce60dd641a-8" name="rest_code_4453f6602c7b4b4983b116ce60dd641a-8" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_4453f6602c7b4b4983b116ce60dd641a-8"></a>  <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="rest_code_4453f6602c7b4b4983b116ce60dd641a-9" name="rest_code_4453f6602c7b4b4983b116ce60dd641a-9" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_4453f6602c7b4b4983b116ce60dd641a-9"></a>    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numbers</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numbers</span><span class="p">)</span>
+</pre></div>
+<p>Which is less than ideal and not as optimized as because of the time complexity of getting mean which is o(n), can we do better than that?</p>
+</section>
+<section id="better-design-cache-the-sum">
+<h4>Better Design: Cache the sum</h4>
+<p>Well after giving some thoughts, when we analyze the add function, we realized that we only ever need 2 items to derive the mean, which is the total sum
+divided by the total numbers we have added. Therefore making some slight tweaks, this is our next attempt. The time complexity is now O(1) where we just
+have to perform the math operations.</p>
+<div class="code"><pre class="code python"><a id="rest_code_8e200b0c45754997a8a0dfdc661247b0-1" name="rest_code_8e200b0c45754997a8a0dfdc661247b0-1" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_8e200b0c45754997a8a0dfdc661247b0-1"></a><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
+<a id="rest_code_8e200b0c45754997a8a0dfdc661247b0-2" name="rest_code_8e200b0c45754997a8a0dfdc661247b0-2" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_8e200b0c45754997a8a0dfdc661247b0-2"></a>  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="rest_code_8e200b0c45754997a8a0dfdc661247b0-3" name="rest_code_8e200b0c45754997a8a0dfdc661247b0-3" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_8e200b0c45754997a8a0dfdc661247b0-3"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="rest_code_8e200b0c45754997a8a0dfdc661247b0-4" name="rest_code_8e200b0c45754997a8a0dfdc661247b0-4" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_8e200b0c45754997a8a0dfdc661247b0-4"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="rest_code_8e200b0c45754997a8a0dfdc661247b0-5" name="rest_code_8e200b0c45754997a8a0dfdc661247b0-5" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_8e200b0c45754997a8a0dfdc661247b0-5"></a>
+<a id="rest_code_8e200b0c45754997a8a0dfdc661247b0-6" name="rest_code_8e200b0c45754997a8a0dfdc661247b0-6" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_8e200b0c45754997a8a0dfdc661247b0-6"></a>  <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="rest_code_8e200b0c45754997a8a0dfdc661247b0-7" name="rest_code_8e200b0c45754997a8a0dfdc661247b0-7" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_8e200b0c45754997a8a0dfdc661247b0-7"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="rest_code_8e200b0c45754997a8a0dfdc661247b0-8" name="rest_code_8e200b0c45754997a8a0dfdc661247b0-8" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_8e200b0c45754997a8a0dfdc661247b0-8"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">+=</span> <span class="n">num</span>
+<a id="rest_code_8e200b0c45754997a8a0dfdc661247b0-9" name="rest_code_8e200b0c45754997a8a0dfdc661247b0-9" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_8e200b0c45754997a8a0dfdc661247b0-9"></a>
+<a id="rest_code_8e200b0c45754997a8a0dfdc661247b0-10" name="rest_code_8e200b0c45754997a8a0dfdc661247b0-10" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_8e200b0c45754997a8a0dfdc661247b0-10"></a>  <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="rest_code_8e200b0c45754997a8a0dfdc661247b0-11" name="rest_code_8e200b0c45754997a8a0dfdc661247b0-11" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_8e200b0c45754997a8a0dfdc661247b0-11"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span>
+</pre></div>
+</section>
+</section>
+<section id="part-2">
+<h3>Part 2</h3>
+<p>The standard deviation formula was provided as such,</p>
+<div class="code"><pre class="code text"><a id="rest_code_e84869e244b949e68acbdd1b9e1144da-1" name="rest_code_e84869e244b949e68acbdd1b9e1144da-1" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_e84869e244b949e68acbdd1b9e1144da-1"></a>SD = sqrt((Σ(x_i - x_mean)^2) / n)
+<a id="rest_code_e84869e244b949e68acbdd1b9e1144da-2" name="rest_code_e84869e244b949e68acbdd1b9e1144da-2" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_e84869e244b949e68acbdd1b9e1144da-2"></a>SD^2 = (Σ(x_i - x_mean)^2) / n
+</pre></div>
+<p>We can try our best to simply the above formula</p>
+<div class="code"><pre class="code text"><a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-1" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-1" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-1"></a>SD^2 = (Σ(x_i - x_mean)^2) / n
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-2" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-2" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-2"></a>
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-3" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-3" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-3"></a>Rewrite it as
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-4" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-4" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-4"></a>SD^2 = (1/n) * Σ(x_i - x_mean)^2
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-5" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-5" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-5"></a>
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-6" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-6" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-6"></a>and expand the terms inside the summation
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-7" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-7" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-7"></a>SD^2 = (1/n) * Σ(x_i^2 - 2 * x_i * x_mean + x_mean^2)
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-8" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-8" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-8"></a>
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-9" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-9" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-9"></a>and then we can put the summation inside and simplify
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-10" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-10" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-10"></a>SD^2 = (1/n) * (Σ(x_i^2) - Σ(2 * x_i * x_mean) + Σ(x_mean^2))
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-11" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-11" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-11"></a>
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-12" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-12" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-12"></a>since, constants (those without reliance of i) in summation are not affected by the variables, we can move it out
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-13" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-13" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-13"></a>SD^2 = (1/n) * (Σ(x_i^2) - 2 * x_mean * Σ(x_i)  + x_mean^2 * Σ(1))
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-14" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-14" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-14"></a>
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-15" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-15" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-15"></a>we can Σ(1) it as n, as we are summing up 1 n times
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-16" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-16" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-16"></a>SD^2 = (1/n) * (Σ(x_i^2) - 2 * x_mean * Σ(x_i)  + x_mean^2 * n)
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-17" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-17" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-17"></a>
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-18" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-18" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-18"></a>there is one more trick we can do to simplify, Σ(x_i) is really just n * x_mean,
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-19" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-19" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-19"></a>multiplying n with the x_mean will also gives us the full sum, same as the summation of x_i
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-20" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-20" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-20"></a>SD^2 = (1/n) * (Σ(x_i^2) - 2 * x_mean * n * x_mean  + x_mean^2 * n)
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-21" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-21" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-21"></a>
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-22" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-22" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-22"></a>We can now introduce the (1/n) into the expression again and simplify further
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-23" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-23" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-23"></a>SD^2 = (1/n) * Σ(x_i^2) - x_mean^2
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-24" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-24" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-24"></a>
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-25" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-25" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-25"></a>Finally we can get the SD as, notice we do not need to recompute anything, however we do need to compute the sum squared
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-26" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-26" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-26"></a>every iteration
+<a id="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-27" name="rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-27" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_5ce4dfd3bcf344ec9da6c37bd8d7f4d3-27"></a>SD = sqrt((1/n) * Σ(x_i^2) - x_mean^2)
+</pre></div>
+<p>And when we write the math expression as code,</p>
+<div class="code"><pre class="code python"><a id="rest_code_1b77a19acedc469d9be5fce5d366122a-1" name="rest_code_1b77a19acedc469d9be5fce5d366122a-1" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-1"></a><span class="kn">import</span> <span class="nn">math</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-2" name="rest_code_1b77a19acedc469d9be5fce5d366122a-2" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-2"></a><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-3" name="rest_code_1b77a19acedc469d9be5fce5d366122a-3" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-3"></a>  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-4" name="rest_code_1b77a19acedc469d9be5fce5d366122a-4" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-4"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-5" name="rest_code_1b77a19acedc469d9be5fce5d366122a-5" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-5"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-6" name="rest_code_1b77a19acedc469d9be5fce5d366122a-6" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-6"></a>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-7" name="rest_code_1b77a19acedc469d9be5fce5d366122a-7" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-7"></a>    <span class="c1"># Additional sum squared</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-8" name="rest_code_1b77a19acedc469d9be5fce5d366122a-8" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-8"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">sum_sq</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-9" name="rest_code_1b77a19acedc469d9be5fce5d366122a-9" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-9"></a>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-10" name="rest_code_1b77a19acedc469d9be5fce5d366122a-10" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-10"></a>  <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-11" name="rest_code_1b77a19acedc469d9be5fce5d366122a-11" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-11"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-12" name="rest_code_1b77a19acedc469d9be5fce5d366122a-12" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-12"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">+=</span> <span class="n">num</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-13" name="rest_code_1b77a19acedc469d9be5fce5d366122a-13" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-13"></a>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-14" name="rest_code_1b77a19acedc469d9be5fce5d366122a-14" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-14"></a>    <span class="c1"># Compute sum squared when adding the number</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-15" name="rest_code_1b77a19acedc469d9be5fce5d366122a-15" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-15"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">sum_sq</span> <span class="o">+=</span> <span class="n">num</span> <span class="o">**</span> <span class="mi">2</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-16" name="rest_code_1b77a19acedc469d9be5fce5d366122a-16" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-16"></a>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-17" name="rest_code_1b77a19acedc469d9be5fce5d366122a-17" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-17"></a>  <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-18" name="rest_code_1b77a19acedc469d9be5fce5d366122a-18" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-18"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-19" name="rest_code_1b77a19acedc469d9be5fce5d366122a-19" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-19"></a>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-20" name="rest_code_1b77a19acedc469d9be5fce5d366122a-20" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-20"></a>  <span class="k">def</span> <span class="nf">std_dev</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-21" name="rest_code_1b77a19acedc469d9be5fce5d366122a-21" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-21"></a>    <span class="n">variance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_sq</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">**</span> <span class="mi">2</span>
+<a id="rest_code_1b77a19acedc469d9be5fce5d366122a-22" name="rest_code_1b77a19acedc469d9be5fce5d366122a-22" href="/posts/single-pass-mean-and-standard-deviation-questions/#rest_code_1b77a19acedc469d9be5fce5d366122a-22"></a>    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">variance</span><span class="p">)</span>
+</pre></div>
+<p>This question is quite interesting because I did not manage to come up with the solution during the interview, however after some research, I got to
+understand about this manner of computing standard deviation in one pass.</p>
+<p>Thanks to the following page for helping me figure the standard deviation part:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.strchr.com/standard_deviation_in_one_pass">Calculating standard deviation in one pass</a></p></li>
+<li><p><a class="reference external" href="http://andreister.github.io/statistics/2016/05/08/single-pass-standard-deviation.html">Single pass standard deviation</a></p></li>
+</ul>
+</section>
+</section>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/" class="u-url">How to ssh into VMware Player/VirtualBox (*BSD/Linux guest from Windows host)</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/" rel="bookmark">
+            <time class="published dt-published" datetime="2022-04-15T15:40:47+08:00" itemprop="datePublished" title="15 Apr 2022">15 Apr 2022</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>This is a guide for setting up ssh into a virtual machine with *BSD/Linux host on a Windows host. Depending on the VM you
+are using, refer to the instructions below.</p>
+<section id="installation">
+<h2>Installation</h2>
+<p>Firstly, install the vm of choice, then proceed to create the vm and install the guest os. In this guide, I will not go
+into details of the installation process. However the important thing is make sure <strong>openssh server is installed
+and enabled on the guest os</strong>.</p>
+<section id="prerequisites">
+<h3>Prerequisites</h3>
+<ol class="arabic simple">
+<li><p>Install VM of choice.</p></li>
+<li><p>Install desired OS in VM.</p></li>
+<li><p>Install and make sure openssh is running.</p></li>
+<li><p>Make sure there is an account to ssh into, (not including root account, root account requires extra config, default ssh do not allow root logins).</p></li>
+</ol>
+</section>
+</section>
+<section id="virtualbox">
+<h2>VirtualBox</h2>
+<p>We will start off with VirtualBox since this is slightly easier to configure. Go below for instructions for VMware Player.</p>
+<p>Setting up SSH access to a VirtualBox host is relatively easy. Just select the vm, go into Settings &gt; Network &gt; Adapter 1 &gt; Port Forwarding. To use port forwarding, ensure
+the network is attached to NAT.</p>
+<img alt="/images/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host_0.png" src="/images/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host_0.png">
+<p>Clicking on portforwarding will open this window.</p>
+<img alt="/images/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host_1.png" src="/images/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host_1.png">
+<p>Click on add new rule with the following settings</p>
+<div class="code"><pre class="code text"><a id="rest_code_2573e6a6be704000a3ef4bfc34bf68ee-1" name="rest_code_2573e6a6be704000a3ef4bfc34bf68ee-1" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_2573e6a6be704000a3ef4bfc34bf68ee-1"></a>name: Allow SSH
+<a id="rest_code_2573e6a6be704000a3ef4bfc34bf68ee-2" name="rest_code_2573e6a6be704000a3ef4bfc34bf68ee-2" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_2573e6a6be704000a3ef4bfc34bf68ee-2"></a>protocol: TCP
+<a id="rest_code_2573e6a6be704000a3ef4bfc34bf68ee-3" name="rest_code_2573e6a6be704000a3ef4bfc34bf68ee-3" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_2573e6a6be704000a3ef4bfc34bf68ee-3"></a>Host IP: &lt;Your Windows public IP&gt;
+<a id="rest_code_2573e6a6be704000a3ef4bfc34bf68ee-4" name="rest_code_2573e6a6be704000a3ef4bfc34bf68ee-4" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_2573e6a6be704000a3ef4bfc34bf68ee-4"></a>Host port: The port the remote SSH connects to, for instance, 2244
+<a id="rest_code_2573e6a6be704000a3ef4bfc34bf68ee-5" name="rest_code_2573e6a6be704000a3ef4bfc34bf68ee-5" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_2573e6a6be704000a3ef4bfc34bf68ee-5"></a>Guest IP: The IP of your guest OS
+<a id="rest_code_2573e6a6be704000a3ef4bfc34bf68ee-6" name="rest_code_2573e6a6be704000a3ef4bfc34bf68ee-6" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_2573e6a6be704000a3ef4bfc34bf68ee-6"></a>Guest Port: it’s TCP 22 for SSH
+</pre></div>
+</section>
+<section id="vmware-player">
+<h2>VMware Player</h2>
+<p>Setting up portforwarding on VMware player requires a little more work as VMware does not have an UI tool to do this.</p>
+<p>To start, we have to edit the following file <cite>C:\ProgramData\VMware\vmnetnat.conf</cite> with admin rights, interestingly in the file, there is a sample line on how to configure for
+several web services including SSH. Find for the line SSH and edit it to look something like this.</p>
+<div class="code"><pre class="code text"><a id="rest_code_0f5bc259e8db4f0a9f29fda7ceb8b43a-1" name="rest_code_0f5bc259e8db4f0a9f29fda7ceb8b43a-1" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_0f5bc259e8db4f0a9f29fda7ceb8b43a-1"></a>&lt;port&gt; = &lt;guest ip&gt;:&lt;ssh port&gt;
+<a id="rest_code_0f5bc259e8db4f0a9f29fda7ceb8b43a-2" name="rest_code_0f5bc259e8db4f0a9f29fda7ceb8b43a-2" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_0f5bc259e8db4f0a9f29fda7ceb8b43a-2"></a>4422   = 192.168.122.128:22
+<a id="rest_code_0f5bc259e8db4f0a9f29fda7ceb8b43a-3" name="rest_code_0f5bc259e8db4f0a9f29fda7ceb8b43a-3" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_0f5bc259e8db4f0a9f29fda7ceb8b43a-3"></a>
+<a id="rest_code_0f5bc259e8db4f0a9f29fda7ceb8b43a-4" name="rest_code_0f5bc259e8db4f0a9f29fda7ceb8b43a-4" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_0f5bc259e8db4f0a9f29fda7ceb8b43a-4"></a>where port is the port to be exposed on the host machine, and guest ip is the ip address of the guest. ssh port should be default at 22.
+</pre></div>
+<p>Once the file is saved, make sure to restart the following service, either using the command line below</p>
+<div class="code"><pre class="code powershell"><a id="rest_code_82f3b063e8b141d7ba21b213be99baa9-1" name="rest_code_82f3b063e8b141d7ba21b213be99baa9-1" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_82f3b063e8b141d7ba21b213be99baa9-1"></a><span class="n">net</span> <span class="n">stop</span> <span class="s2">"VMWare NAT Service"</span>
+<a id="rest_code_82f3b063e8b141d7ba21b213be99baa9-2" name="rest_code_82f3b063e8b141d7ba21b213be99baa9-2" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_82f3b063e8b141d7ba21b213be99baa9-2"></a><span class="n">net</span> <span class="nb">start </span><span class="s2">"VMWare NAT Service"</span>
+</pre></div>
+<p>or using services.msc with the service name, VMware NAT Service.</p>
+<img alt="/images/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host_2.png" src="/images/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host_2.png">
+</section>
+<section id="ssh-into-vm">
+<h2>SSH into VM</h2>
+<p>Once the above is done done, start the VM and connect to it via the following command</p>
+<div class="code"><pre class="code bash"><a id="rest_code_64e91d1b1c7e4eedb2d20ec2ffc43b79-1" name="rest_code_64e91d1b1c7e4eedb2d20ec2ffc43b79-1" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_64e91d1b1c7e4eedb2d20ec2ffc43b79-1"></a>ssh<span class="w"> </span>-p<span class="w"> </span>&lt;port<span class="w"> </span><span class="nb">set</span><span class="w"> </span>earlier,<span class="w"> </span>e.g.<span class="w"> </span><span class="m">2244</span>&gt;<span class="w"> </span>&lt;myusername&gt;@localhost
+<a id="rest_code_64e91d1b1c7e4eedb2d20ec2ffc43b79-2" name="rest_code_64e91d1b1c7e4eedb2d20ec2ffc43b79-2" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_64e91d1b1c7e4eedb2d20ec2ffc43b79-2"></a>
+<a id="rest_code_64e91d1b1c7e4eedb2d20ec2ffc43b79-3" name="rest_code_64e91d1b1c7e4eedb2d20ec2ffc43b79-3" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_64e91d1b1c7e4eedb2d20ec2ffc43b79-3"></a><span class="c1"># An example of connecting to my created username david at port 2244</span>
+<a id="rest_code_64e91d1b1c7e4eedb2d20ec2ffc43b79-4" name="rest_code_64e91d1b1c7e4eedb2d20ec2ffc43b79-4" href="/posts/how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/#rest_code_64e91d1b1c7e4eedb2d20ec2ffc43b79-4"></a>ssh<span class="w"> </span>-p<span class="w"> </span><span class="m">2244</span><span class="w"> </span>david@localhost
+</pre></div>
+<p>Credits to Stanley for the <a class="reference external" href="https://slmeng.medium.com/how-to-ssh-into-vmware-player-virtual-box-guest-linux-os-remotely-host-os-is-window-10-40cb348c996f">medium</a> post.</p>
+</section>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/what-you-see-is-not-what-you-get/" class="u-url">What you see is not what you get</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/what-you-see-is-not-what-you-get/" rel="bookmark">
+            <time class="published dt-published" datetime="2022-03-28T22:05:47+08:00" itemprop="datePublished" title="28 Mar 2022">28 Mar 2022</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>This is mostly a rant of my experience working with Unicodes. Do not get me wrong, I love unicodes and the introduction of them have really changed the way we typed text, ranging from
+having non-english characters to supporting Emojis. What I do not understand is how inconsistent this experience seems to be.</p>
+<p>For a little bit of context, this is what I was doing. I was editing my document on Google Docs, and feeling a little cheeky, I decided to use some emojis, 😄. What could ever go wrong
+with using them right? We are used to seeing it on our phones, messages, emails, desktop. So back to our little story, I decided to use some emojis, it does not matter which emoji but
+I am liking that particular design, which seems to be using Google's emoticon since it is rendered with Google Docs.</p>
+<p>So here comes the part that caught me by surprise. I wanted to get a PDF document of the document I was working on, so I decided to use the download as PDF functionality in Google Docs.
+One can only assume that the PDF will exactly what you see is what you get, right? It turns out that, the downloaded PDF uses Microsoft's version of those emoticons, which happens to be
+slightly different from those used by Google.</p>
+<p>In my mind, I was wondering, why did Google render the emoticon using Google's own style but uses the native OS's style when downloaded. Not sure if that's intended but I think it is
+definitely not intuitive. I understand Google Docs is no tool for designers, however all I am asking for is some consistency.</p>
+<p>Anyways, later I did find a workaround to get the PDF document with the "correct" style of emoticon as I saw on Google Docs. This so called workaround does require you to be using some
+form of Chrome browsers which I assume most of you would be using by now. The way to get the PDF with Google's emoticon, is to click on Print.</p>
+<img alt="/images/what-you-see-is-not-what-you-get_0.png" src="/images/what-you-see-is-not-what-you-get_0.png">
+<p>After which, make sure that the options Save as PDF is selected instead of Microsoft Print to PDF. Choosing that option will render the emoticon as Microsoft's style. The PDF should now
+have the proper emoticon showing. Hopefully that works for you.</p>
+<img alt="/images/what-you-see-is-not-what-you-get_1.png" src="/images/what-you-see-is-not-what-you-get_1.png">
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/installing-kali-linux-on-freebsd-bhyve/" class="u-url">Installing Kali Linux on FreeBSD bhyve</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/installing-kali-linux-on-freebsd-bhyve/" rel="bookmark">
+            <time class="published dt-published" datetime="2021-03-13T14:18:50+08:00" itemprop="datePublished" title="13 Mar 2021">13 Mar 2021</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>Currently I wanted to learn some penetration testing and I have heard a fair bit about FreeBSD's hypervisor bhyve and I thought why not
+install one Kali/Parrot on my FreeBSD machine. Bhyve is a a FreeBSD hypervisor built into the base of FreeBSD. One can set up the vm using
+just bhyve and the FreeBSD handbook, but I decided to use the tool vm-bhyve to help me with the task. After much tinkering, this is the steps
+that I have collected to deploy a Kali on my machine. Note: I have issues with booting Parrot OS somehow. I just got a blinking cursor which
+I could not got through. I will need to take a look another time. For now this are the steps that I have done.</p>
+<div class="code"><pre class="code bash"><a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-1" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-1" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-1"></a><span class="c1"># Install grub2-bhyve for linux grub bootloader</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-2" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-2" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-2"></a><span class="c1"># vm-bhyve is wrapper for bhyve</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-3" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-3" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-3"></a>doas<span class="w"> </span>pkg<span class="w"> </span>install<span class="w"> </span>vm-bhyve<span class="w"> </span>grub2-bhyve
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-4" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-4" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-4"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-5" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-5" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-5"></a><span class="c1"># Install any vnc client you like, for me I am using tigervnc</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-6" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-6" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-6"></a>doas<span class="w"> </span>pkg<span class="w"> </span>install<span class="w"> </span>tigervnc
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-7" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-7" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-7"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-8" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-8" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-8"></a><span class="c1"># Load kernel virtualization module</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-9" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-9" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-9"></a>doas<span class="w"> </span>kldload<span class="w"> </span>if_bridge<span class="w"> </span>if_tap<span class="w"> </span>nmdm<span class="w"> </span>vmm
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-10" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-10" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-10"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-11" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-11" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-11"></a><span class="c1"># Make loading of kernel modules persistent</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-12" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-12" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-12"></a>doas<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">'if_bridge_load="YES"'</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/boot/loader.conf
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-13" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-13" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-13"></a>doas<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">'if_tap_load="YES"'</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/boot/loader.conf
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-14" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-14" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-14"></a>doas<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">'nmdm_load="YES"'</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/boot/loader.conf
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-15" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-15" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-15"></a>doas<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">'vmm_load="YES"'</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/boot/loader.conf
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-16" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-16" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-16"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-17" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-17" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-17"></a><span class="c1"># Set configuration for byhve-vm</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-18" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-18" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-18"></a>doas<span class="w"> </span>sysrc<span class="w"> </span><span class="nv">vm_enable</span><span class="o">=</span><span class="s2">"YES"</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-19" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-19" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-19"></a>doas<span class="w"> </span>sysrc<span class="w"> </span><span class="nv">vm_dir</span><span class="o">=</span><span class="s2">"zfs:zroot/vms"</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-20" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-20" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-20"></a>doas<span class="w"> </span>sysrc<span class="w"> </span><span class="nv">vm_delay</span><span class="o">=</span><span class="s2">"5"</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-21" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-21" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-21"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-22" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-22" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-22"></a><span class="c1"># Edit our pf rules</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-23" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-23" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-23"></a>doas<span class="w"> </span>vi<span class="w"> </span>/etc/pf.conf
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-24" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-24" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-24"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-25" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-25" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-25"></a><span class="c1"># Add the following, taken from https://aliov.org/index.php/2020/03/22/bhyve-nat-vm-setup/</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-26" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-26" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-26"></a><span class="c1"># Note: IPs are taken from reference of https://github.com/churchers/vm-bhyve/wiki/NAT-Configuration</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-27" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-27" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-27"></a>nat<span class="w"> </span>on<span class="w"> </span>wlan0<span class="w"> </span>from<span class="w"> </span><span class="o">{</span><span class="m">192</span>.168.8.0/24<span class="o">}</span><span class="w"> </span>to<span class="w"> </span>any<span class="w"> </span>-&gt;<span class="w"> </span><span class="o">(</span>wlan0<span class="o">)</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-28" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-28" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-28"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-29" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-29" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-29"></a><span class="c1"># Enable ip forwarding</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-30" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-30" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-30"></a>doas<span class="w"> </span>sysctl<span class="w"> </span>net.inet.ip.forwarding<span class="o">=</span><span class="m">1</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-31" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-31" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-31"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-32" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-32" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-32"></a><span class="c1"># Set configuration for NAT (network for our guest)</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-33" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-33" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-33"></a><span class="nv">gateway_enable</span><span class="o">=</span><span class="s2">"yes"</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-34" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-34" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-34"></a><span class="nv">pf_enable</span><span class="o">=</span><span class="s2">"yes"</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-35" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-35" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-35"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-36" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-36" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-36"></a><span class="c1"># Start PF if not started</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-37" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-37" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-37"></a>doas<span class="w"> </span>service<span class="w"> </span>pf<span class="w"> </span>start
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-38" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-38" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-38"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-39" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-39" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-39"></a><span class="c1"># Otherwise restart</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-40" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-40" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-40"></a>doas<span class="w"> </span>service<span class="w"> </span>pf<span class="w"> </span>restart
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-41" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-41" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-41"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-42" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-42" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-42"></a><span class="c1"># Create filesystem for VMs, all the vms will live inside, managed by vm-bhyve (settings above)</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-43" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-43" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-43"></a>doas<span class="w"> </span>zfs<span class="w"> </span>create<span class="w"> </span>-o<span class="w"> </span><span class="nv">mountpoint</span><span class="o">=</span>/vms<span class="w"> </span>zroot/vms
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-44" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-44" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-44"></a>doas<span class="w"> </span>vm<span class="w"> </span>init
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-45" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-45" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-45"></a>doas<span class="w"> </span>cp<span class="w"> </span>/usr/local/share/examples/vm-bhyve/*<span class="w"> </span>/vms/.templates/
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-46" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-46" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-46"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-47" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-47" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-47"></a><span class="c1"># Create bridge device, as I am using wifi, I set it to wlan0</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-48" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-48" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-48"></a>doas<span class="w"> </span>vm<span class="w"> </span>switch<span class="w"> </span>create<span class="w"> </span>-a<span class="w"> </span><span class="m">192</span>.168.8.1/24<span class="w"> </span>public
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-49" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-49" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-49"></a>doas<span class="w"> </span>vm<span class="w"> </span>switch<span class="w"> </span>add<span class="w"> </span>public<span class="w"> </span>wlan0
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-50" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-50" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-50"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-51" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-51" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-51"></a><span class="c1"># To see switch info</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-52" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-52" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-52"></a>doas<span class="w"> </span>vm<span class="w"> </span>switch<span class="w"> </span>info
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-53" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-53" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-53"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-54" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-54" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-54"></a><span class="c1"># To see all switches</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-55" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-55" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-55"></a>doas<span class="w"> </span>vm<span class="w"> </span>switch<span class="w"> </span>list
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-56" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-56" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-56"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-57" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-57" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-57"></a><span class="c1"># Grab Kali from the net (Note: source could be local filesystem) will be downloaded to /vms/.iso</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-58" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-58" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-58"></a>doas<span class="w"> </span>vm<span class="w"> </span>iso<span class="w"> </span>https://cdimage.kali.org/kali-2021.1/kali-linux-2021.1-installer-amd64.iso
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-59" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-59" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-59"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-60" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-60" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-60"></a><span class="c1"># Create the VM (-t stands for template and -s is the size of the vm)</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-61" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-61" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-61"></a><span class="c1"># More templates can be found at /vms/.templates</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-62" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-62" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-62"></a>doas<span class="w"> </span>vm<span class="w"> </span>create<span class="w"> </span>-t<span class="w"> </span>debian<span class="w"> </span>-s<span class="w"> </span>20G<span class="w"> </span>mykali
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-63" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-63" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-63"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-64" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-64" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-64"></a><span class="c1"># Configure things like memory, cpu, uefi, vnc settings</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-65" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-65" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-65"></a>doas<span class="w"> </span>vm<span class="w"> </span>configure<span class="w"> </span>mykali
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-66" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-66" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-66"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-67" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-67" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-67"></a><span class="c1"># This are the things I added, refer to https://github.com/churchers/vm-bhyve/wiki/UEFI-Graphics-(VNC)</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-68" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-68" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-68"></a><span class="nv">cpu</span><span class="o">=</span><span class="m">2</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-69" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-69" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-69"></a><span class="nv">memory</span><span class="o">=</span>4G
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-70" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-70" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-70"></a><span class="nv">uefi</span><span class="o">=</span><span class="s2">"yes"</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-71" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-71" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-71"></a><span class="nv">graphics</span><span class="o">=</span><span class="s2">"yes"</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-72" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-72" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-72"></a><span class="nv">graphics_res</span><span class="o">=</span><span class="s2">"1600x1200"</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-73" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-73" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-73"></a><span class="nv">xhci_mouse</span><span class="o">=</span><span class="s2">"yes"</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-74" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-74" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-74"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-75" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-75" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-75"></a><span class="c1"># To check the iso name in the iso store</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-76" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-76" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-76"></a>doas<span class="w"> </span>vm<span class="w"> </span>iso
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-77" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-77" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-77"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-78" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-78" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-78"></a><span class="c1"># In this case kali-linux-2021.1-installer-amd64.iso is the iso I want</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-79" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-79" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-79"></a>DATASTORE<span class="w">           </span>FILENAME
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-80" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-80" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-80"></a>default<span class="w">             </span>kali-linux-2021.1-installer-amd64.iso
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-81" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-81" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-81"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-82" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-82" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-82"></a><span class="c1"># Start installation from the ISO, this step will boot the vm with the iso</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-83" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-83" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-83"></a>doas<span class="w"> </span>vm<span class="w"> </span>install<span class="w"> </span>mykali<span class="w">  </span>kali-linux-2021.1-installer-amd64.iso
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-84" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-84" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-84"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-85" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-85" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-85"></a><span class="c1"># Since I am intending to use with TigerVNC, I put in 127.0.0.1:5900 (default vnc port) for the host</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-86" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-86" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-86"></a>vncviewer<span class="w"> </span><span class="m">127</span>.0.0.1:5900
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-87" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-87" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-87"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-88" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-88" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-88"></a><span class="c1"># Due to the uefi folder not in BOOT, it will not boot properly hence what I did was use the expert install menu</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-89" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-89" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-89"></a><span class="c1"># and when prompted about installing grub to my removable drive, I click yes and it will show a installing to dummy grub</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-90" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-90" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-90"></a><span class="c1"># Otherwise if you miss this, you can still remediate</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-91" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-91" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-91"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-92" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-92" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-92"></a><span class="c1"># After install, you can always configure again if you need to add resource whatsoever</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-93" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-93" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-93"></a>doas<span class="w"> </span>vm<span class="w"> </span>configure<span class="w"> </span>mykali
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-94" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-94" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-94"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-95" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-95" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-95"></a><span class="c1"># Enable autostart of the newly created VM, if you want</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-96" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-96" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-96"></a>doas<span class="w"> </span>sysrc<span class="w"> </span><span class="nv">vm_list</span><span class="o">=</span><span class="s2">"mykali"</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-97" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-97" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-97"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-98" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-98" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-98"></a><span class="c1"># Otherwise you can manually start with</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-99" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-99" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-99"></a>doas<span class="w"> </span>vm<span class="w"> </span>start<span class="w"> </span>mykali
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-100" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-100" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-100"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-101" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-101" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-101"></a><span class="c1"># If you have not done the installing grub fix, you might be faced with an boot failed efi cdrom/dvd message.</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-102" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-102" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-102"></a><span class="c1"># Wait a while for a shell to appear, type exit the quit the shell and you should see a bhyve boot menu</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-103" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-103" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-103"></a><span class="c1"># go to Boot Maintainence Manager &gt; Boot From File &gt; YOUR_BOOT_LABEL</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-104" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-104" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-104"></a><span class="c1"># You should see an EFI entry inside, go ahead into kali and select the grubx64.efi, your OS should not show the</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-105" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-105" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-105"></a><span class="c1"># bootloader</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-106" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-106" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-106"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-107" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-107" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-107"></a><span class="c1"># Once inside, do the following to fix the grub issue, Note: this have to be done everytime grub updates</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-108" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-108" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-108"></a>sudo<span class="w"> </span>su
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-109" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-109" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-109"></a>mkdir<span class="w"> </span>/boot/efi/EFI/BOOT/
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-110" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-110" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-110"></a><span class="nb">cd</span><span class="w"> </span>/boot/efi/EFI/kali
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-111" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-111" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-111"></a>cp<span class="w"> </span>grubx64.efi<span class="w"> </span>/boot/efi/EFI/BOOT/bootx64.efi
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-112" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-112" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-112"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-113" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-113" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-113"></a><span class="c1"># Reboot the machine to see the change</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-114" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-114" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-114"></a>reboot
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-115" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-115" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-115"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-116" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-116" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-116"></a><span class="c1"># To stop the vm and power down if there is any issue, other can just power off from the guest</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-117" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-117" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-117"></a>doas<span class="w"> </span>vm<span class="w"> </span>stop<span class="w"> </span>mykali
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-118" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-118" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-118"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-119" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-119" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-119"></a><span class="c1"># To see list of all vms and it's state</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-120" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-120" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-120"></a>doas<span class="w"> </span>vm<span class="w"> </span>list
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-121" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-121" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-121"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-122" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-122" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-122"></a><span class="c1"># To set up internet in the kali, right click on the network connection icon on the top bar and click edit connection</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-123" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-123" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-123"></a><span class="c1"># Go to the ipv4 settings and set the machine ip to be 192.168.8.2/24 and the gateway to be 192.168.8.1</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-124" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-124" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-124"></a><span class="c1"># Set the DNS to 8.8.8.8 (Google DNS)</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-125" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-125" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-125"></a><span class="c1"># Try to ping the following and make sure it is not timed out</span>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-126" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-126" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-126"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">192</span>.168.8.1
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-127" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-127" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-127"></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">8</span>.8.8.8
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-128" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-128" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-128"></a>
+<a id="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-129" name="rest_code_8cf8be7c8dab4e47834654cbe0d7063e-129" href="/posts/installing-kali-linux-on-freebsd-bhyve/#rest_code_8cf8be7c8dab4e47834654cbe0d7063e-129"></a><span class="c1"># If all else succeed, you will have Kali Linux running on your FreeBSD laptop with internet access.</span>
+</pre></div>
+<dl class="simple">
+<dt>All thanks to (for troubleshooting and guides):</dt>
+<dd><ul class="simple">
+<li><p><a class="reference external" href="https://www.davd.io/install-ubuntu-on-freebsd-with-bhyve/">Install Ubuntu on FreeBSD with byhve (Update Ubuntu 18.04)</a></p></li>
+<li><p><a class="reference external" href="https://www.cyberciti.biz/faq/how-to-install-linux-vm-on-freebsd-using-bhyve-and-zfs/">How to install Linux VM on FreeBSD using bhyve and ZFS</a></p></li>
+<li><p><a class="reference external" href="https://github.com/churchers/vm-bhyve/wiki/UEFI-Graphics-(VNC)">UEFI Graphics (VNC) vm-bhyve wiki</a></p></li>
+<li><p><a class="reference external" href="https://github.com/churchers/vm-bhyve/wiki/NAT-Configuration">Nat configuration vm-bhhyve wiki</a></p></li>
+<li><p><a class="reference external" href="https://blog.tkrn.io/freenas-11-boot-failed-efi-misc-device-fix-debian/">FreeNAS 11 “Boot Failed. EFI Misc Device” Fix (Debian)</a></p></li>
+<li><p><a class="reference external" href="https://www.jongibbins.com/solving-uefi-boot-problems-on-bhyve-freenas-vm/">Solving UEFI Boot Problems on Bhyve / FreeNAS VM</a></p></li>
+<li><p><a class="reference external" href="https://aliov.org/index.php/2020/03/22/bhyve-nat-vm-setup/">bhyve wireless NAT vm setup</a></p></li>
+</ul>
+</dd>
+</dl>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/deploying-dash-application-to-heroku-for-freebsd/" class="u-url">Deploying Dash application to Heroku (for FreeBSD)</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/deploying-dash-application-to-heroku-for-freebsd/" rel="bookmark">
+            <time class="published dt-published" datetime="2021-01-03T10:18:32+08:00" itemprop="datePublished" title="03 Jan 2020">03 Jan 2020</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>Before you begin, ensure that you have the following prerequisite before you begin,</p>
+<section id="prerequisite">
+<h2>Prerequisite</h2>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="https://www.heroku.com/">Heroku</a> account</p></li>
+<li><p>git</p></li>
+<li><p>python and virtualenv</p></li>
+</ol>
+</section>
+<section id="creating-project-from-scratch">
+<h2>Creating project from scratch</h2>
+<section id="step-1-create-a-new-folder-for-your-new-dash-app">
+<h3>Step 1. Create a new folder for your new <a class="reference external" href="https://dash.plotly.com/">Dash</a> app</h3>
+<p>Here we will create a new folder to put our project in</p>
+<blockquote>
+<div class="code"><pre class="code bash"><a id="rest_code_39911f2bca754355b18e7345b60aeff0-1" name="rest_code_39911f2bca754355b18e7345b60aeff0-1" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_39911f2bca754355b18e7345b60aeff0-1"></a>$<span class="w"> </span>mkdir<span class="w"> </span>my_dash_app
+<a id="rest_code_39911f2bca754355b18e7345b60aeff0-2" name="rest_code_39911f2bca754355b18e7345b60aeff0-2" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_39911f2bca754355b18e7345b60aeff0-2"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>my_dash_app
+</pre></div>
+</blockquote>
+</section>
+<section id="step-2-init-the-folder-with-git-and-a-virtualenv">
+<h3>Step 2. Init the folder with git and a virtualenv</h3>
+<blockquote>
+<div class="code"><pre class="code bash"><a id="rest_code_c940d9a7bafd4aa094865a7495e719d2-1" name="rest_code_c940d9a7bafd4aa094865a7495e719d2-1" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_c940d9a7bafd4aa094865a7495e719d2-1"></a>$<span class="w"> </span>git<span class="w"> </span>init<span class="w">                          </span><span class="c1"># initializes an empty git repo</span>
+<a id="rest_code_c940d9a7bafd4aa094865a7495e719d2-2" name="rest_code_c940d9a7bafd4aa094865a7495e719d2-2" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_c940d9a7bafd4aa094865a7495e719d2-2"></a>$<span class="w"> </span>virtualenv<span class="w"> </span>venv<span class="w">                   </span><span class="c1"># creates a virtualenv called "venv"</span>
+<a id="rest_code_c940d9a7bafd4aa094865a7495e719d2-3" name="rest_code_c940d9a7bafd4aa094865a7495e719d2-3" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_c940d9a7bafd4aa094865a7495e719d2-3"></a>$<span class="w"> </span><span class="nb">source</span><span class="w"> </span>venv/bin/activate<span class="w">          </span><span class="c1"># uses the virtualenv</span>
+</pre></div>
+</blockquote>
+</section>
+<section id="step-3-pip-install-dash-and-gunicorn-package">
+<h3>Step 3. (Pip) install <a class="reference external" href="https://dash.plotly.com/">Dash</a> and <a class="reference external" href="https://gunicorn.org/">Gunicorn</a> package</h3>
+<blockquote>
+<div class="code"><pre class="code bash"><a id="rest_code_d4b16742fb694620a5c07c84d1bec294-1" name="rest_code_d4b16742fb694620a5c07c84d1bec294-1" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_d4b16742fb694620a5c07c84d1bec294-1"></a>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>dash
+<a id="rest_code_d4b16742fb694620a5c07c84d1bec294-2" name="rest_code_d4b16742fb694620a5c07c84d1bec294-2" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_d4b16742fb694620a5c07c84d1bec294-2"></a>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>plotly
+<a id="rest_code_d4b16742fb694620a5c07c84d1bec294-3" name="rest_code_d4b16742fb694620a5c07c84d1bec294-3" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_d4b16742fb694620a5c07c84d1bec294-3"></a>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>gunicorn
+</pre></div>
+</blockquote>
+</section>
+<section id="step-4-initialize-the-folder-with-sample-app-for-deployment">
+<h3>Step 4. Initialize the folder with sample app for deployment</h3>
+<p>Create the following files in the project folder</p>
+<p><strong>app.py</strong></p>
+<blockquote>
+<div class="code"><pre class="code python"><a id="rest_code_e6844088bde6461cb302762ee24d5aae-1" name="rest_code_e6844088bde6461cb302762ee24d5aae-1" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-1"></a><span class="kn">import</span> <span class="nn">dash</span>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-2" name="rest_code_e6844088bde6461cb302762ee24d5aae-2" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-2"></a><span class="kn">import</span> <span class="nn">dash_core_components</span> <span class="k">as</span> <span class="nn">dcc</span>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-3" name="rest_code_e6844088bde6461cb302762ee24d5aae-3" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-3"></a><span class="kn">import</span> <span class="nn">dash_html_components</span> <span class="k">as</span> <span class="nn">html</span>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-4" name="rest_code_e6844088bde6461cb302762ee24d5aae-4" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-4"></a>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-5" name="rest_code_e6844088bde6461cb302762ee24d5aae-5" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-5"></a><span class="n">external_stylesheets</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'https://codepen.io/chriddyp/pen/bWLwgP.css'</span><span class="p">]</span>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-6" name="rest_code_e6844088bde6461cb302762ee24d5aae-6" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-6"></a>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-7" name="rest_code_e6844088bde6461cb302762ee24d5aae-7" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-7"></a><span class="n">app</span> <span class="o">=</span> <span class="n">dash</span><span class="o">.</span><span class="n">Dash</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">external_stylesheets</span><span class="o">=</span><span class="n">external_stylesheets</span><span class="p">)</span>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-8" name="rest_code_e6844088bde6461cb302762ee24d5aae-8" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-8"></a>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-9" name="rest_code_e6844088bde6461cb302762ee24d5aae-9" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-9"></a><span class="n">server</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">server</span>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-10" name="rest_code_e6844088bde6461cb302762ee24d5aae-10" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-10"></a>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-11" name="rest_code_e6844088bde6461cb302762ee24d5aae-11" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-11"></a><span class="n">top_markdown_text</span> <span class="o">=</span> <span class="s1">'''</span>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-12" name="rest_code_e6844088bde6461cb302762ee24d5aae-12" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-12"></a><span class="s1">This is my first deployed app</span>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-13" name="rest_code_e6844088bde6461cb302762ee24d5aae-13" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-13"></a><span class="s1">'''</span>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-14" name="rest_code_e6844088bde6461cb302762ee24d5aae-14" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-14"></a>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-15" name="rest_code_e6844088bde6461cb302762ee24d5aae-15" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-15"></a><span class="n">app</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">([</span>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-16" name="rest_code_e6844088bde6461cb302762ee24d5aae-16" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-16"></a>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-17" name="rest_code_e6844088bde6461cb302762ee24d5aae-17" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-17"></a>    <span class="n">dcc</span><span class="o">.</span><span class="n">Markdown</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="n">top_markdown_text</span><span class="p">),</span>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-18" name="rest_code_e6844088bde6461cb302762ee24d5aae-18" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-18"></a>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-19" name="rest_code_e6844088bde6461cb302762ee24d5aae-19" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-19"></a><span class="p">])</span>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-20" name="rest_code_e6844088bde6461cb302762ee24d5aae-20" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-20"></a>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-21" name="rest_code_e6844088bde6461cb302762ee24d5aae-21" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-21"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+<a id="rest_code_e6844088bde6461cb302762ee24d5aae-22" name="rest_code_e6844088bde6461cb302762ee24d5aae-22" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e6844088bde6461cb302762ee24d5aae-22"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run_server</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</blockquote>
+<p><strong>.gitignore</strong></p>
+<blockquote>
+<div class="code"><pre class="code text"><a id="rest_code_9075ce4e8cb24751aab34a0d5974e5c6-1" name="rest_code_9075ce4e8cb24751aab34a0d5974e5c6-1" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_9075ce4e8cb24751aab34a0d5974e5c6-1"></a>venv
+<a id="rest_code_9075ce4e8cb24751aab34a0d5974e5c6-2" name="rest_code_9075ce4e8cb24751aab34a0d5974e5c6-2" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_9075ce4e8cb24751aab34a0d5974e5c6-2"></a>*.pyc
+<a id="rest_code_9075ce4e8cb24751aab34a0d5974e5c6-3" name="rest_code_9075ce4e8cb24751aab34a0d5974e5c6-3" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_9075ce4e8cb24751aab34a0d5974e5c6-3"></a>.env
+</pre></div>
+</blockquote>
+<p><strong>Procfile</strong></p>
+<p>(Note that app refers to the filename app.py. server refers to the variable server inside that file).</p>
+<blockquote>
+<div class="code"><pre class="code text"><a id="rest_code_b7854937b90a46d1aff5a332ff1d2293-1" name="rest_code_b7854937b90a46d1aff5a332ff1d2293-1" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_b7854937b90a46d1aff5a332ff1d2293-1"></a>web: gunicorn app:server
+</pre></div>
+</blockquote>
+<p><strong>requirements.txt</strong></p>
+<p>This is needed for heroku buildpacks to recognize that this is a python project.
+Basic requirements.txt</p>
+<blockquote>
+<div class="code"><pre class="code text"><a id="rest_code_c21c0ceb027e4909aae51106f6d57636-1" name="rest_code_c21c0ceb027e4909aae51106f6d57636-1" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_c21c0ceb027e4909aae51106f6d57636-1"></a>dash
+<a id="rest_code_c21c0ceb027e4909aae51106f6d57636-2" name="rest_code_c21c0ceb027e4909aae51106f6d57636-2" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_c21c0ceb027e4909aae51106f6d57636-2"></a>plotly
+<a id="rest_code_c21c0ceb027e4909aae51106f6d57636-3" name="rest_code_c21c0ceb027e4909aae51106f6d57636-3" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_c21c0ceb027e4909aae51106f6d57636-3"></a>gunicorn
+</pre></div>
+</blockquote>
+<p>or you can fill this with:</p>
+<blockquote>
+<div class="code"><pre class="code bash"><a id="rest_code_b31ef5c963d74526a5f558e12e9a81b9-1" name="rest_code_b31ef5c963d74526a5f558e12e9a81b9-1" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_b31ef5c963d74526a5f558e12e9a81b9-1"></a>$<span class="w"> </span>pip<span class="w"> </span>freeze<span class="w"> </span>&gt;<span class="w"> </span>requirements.txt
+</pre></div>
+</blockquote>
+</section>
+<section id="step-5-installing-heroku-cli-if-you-have-not">
+<h3>Step 5. Installing Heroku CLI (if you have not)</h3>
+<p>The <a class="reference external" href="https://devcenter.heroku.com/articles/heroku-cli">CLI</a> tool can be downloaded and installed on your system. There are few ways to install based on your operating system. As for myself,
+I am using FreeBSD, therefore I will just install the <a class="reference external" href="https://www.npmjs.com/package/heroku">NPM package</a> using <a class="reference external" href="https://yarnpkg.com/">yarn</a>.</p>
+<p>Note: The method I am using will install heroku cli tools to the dash project locally.</p>
+<blockquote>
+<div class="code"><pre class="code bash"><a id="rest_code_ab40db49ce3a4f199fde99a1f59994da-1" name="rest_code_ab40db49ce3a4f199fde99a1f59994da-1" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_ab40db49ce3a4f199fde99a1f59994da-1"></a>$<span class="w"> </span>sudo<span class="w"> </span>pkg<span class="w"> </span>install<span class="w"> </span>yarn<span class="w">             </span><span class="c1"># Make sure yarn is installed</span>
+<a id="rest_code_ab40db49ce3a4f199fde99a1f59994da-2" name="rest_code_ab40db49ce3a4f199fde99a1f59994da-2" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_ab40db49ce3a4f199fde99a1f59994da-2"></a>$<span class="w"> </span>yarn<span class="w"> </span>add<span class="w"> </span>heroku<span class="w">                   </span><span class="c1"># Will add heroku to the local project folder</span>
+<a id="rest_code_ab40db49ce3a4f199fde99a1f59994da-3" name="rest_code_ab40db49ce3a4f199fde99a1f59994da-3" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_ab40db49ce3a4f199fde99a1f59994da-3"></a>$<span class="w"> </span>yarn<span class="w"> </span>run<span class="w"> </span>heroku<span class="w">                   </span><span class="c1"># this will run heroku and print help messages</span>
+<a id="rest_code_ab40db49ce3a4f199fde99a1f59994da-4" name="rest_code_ab40db49ce3a4f199fde99a1f59994da-4" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_ab40db49ce3a4f199fde99a1f59994da-4"></a>$<span class="w"> </span>yarn<span class="w"> </span>run<span class="w"> </span>heroku<span class="w"> </span><span class="o">[</span>cmd<span class="o">]</span><span class="w">             </span><span class="c1"># To run heroku command</span>
+</pre></div>
+</blockquote>
+</section>
+<section id="step-6-initialize-heroku-add-files-to-git-and-deploy">
+<h3>Step 6. Initialize Heroku, add files to Git, and deploy</h3>
+<p>Note: as stated above, as I am running the heroku cli as a npm package installed locally, I need to use yarn run command.</p>
+<blockquote>
+<div class="code"><pre class="code bash"><a id="rest_code_e66e4910afb24b3faea23ed97ddb2341-1" name="rest_code_e66e4910afb24b3faea23ed97ddb2341-1" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e66e4910afb24b3faea23ed97ddb2341-1"></a>$<span class="w"> </span>yarn<span class="w"> </span>run<span class="w"> </span>heroku<span class="w"> </span>create<span class="w"> </span>my-dash-app<span class="w"> </span><span class="c1"># change my-dash-app to a unique name</span>
+<a id="rest_code_e66e4910afb24b3faea23ed97ddb2341-2" name="rest_code_e66e4910afb24b3faea23ed97ddb2341-2" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e66e4910afb24b3faea23ed97ddb2341-2"></a>$<span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>.<span class="w">                          </span><span class="c1"># add all files to git</span>
+<a id="rest_code_e66e4910afb24b3faea23ed97ddb2341-3" name="rest_code_e66e4910afb24b3faea23ed97ddb2341-3" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e66e4910afb24b3faea23ed97ddb2341-3"></a>$<span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s1">'Initial app commit'</span>
+<a id="rest_code_e66e4910afb24b3faea23ed97ddb2341-4" name="rest_code_e66e4910afb24b3faea23ed97ddb2341-4" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e66e4910afb24b3faea23ed97ddb2341-4"></a>$<span class="w"> </span>git<span class="w"> </span>push<span class="w"> </span>heroku<span class="w"> </span>master<span class="w">             </span><span class="c1"># deploy code to heroku</span>
+<a id="rest_code_e66e4910afb24b3faea23ed97ddb2341-5" name="rest_code_e66e4910afb24b3faea23ed97ddb2341-5" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_e66e4910afb24b3faea23ed97ddb2341-5"></a>$<span class="w"> </span>yarn<span class="w"> </span>run<span class="w"> </span>heroku<span class="w"> </span>ps:scale<span class="w"> </span><span class="nv">web</span><span class="o">=</span><span class="m">1</span><span class="w">     </span><span class="c1"># run the app with a 1 heroku "dyno"</span>
+</pre></div>
+</blockquote>
+<p>After this, you should be able to view your app at <a class="reference external" href="https://my-dash-app.herokuapp.com">https://my-dash-app.herokuapp.com</a> or whatever the app name
+you have set to.</p>
+</section>
+<section id="step-7-update-the-code-and-redeploy">
+<h3>Step 7. Update the code and redeploy</h3>
+<p>When you have made changes to the git repo, you can update heroku again using,</p>
+<blockquote>
+<div class="code"><pre class="code bash"><a id="rest_code_41ed54623e6e413f8fd61143675eebcd-1" name="rest_code_41ed54623e6e413f8fd61143675eebcd-1" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_41ed54623e6e413f8fd61143675eebcd-1"></a>$<span class="w"> </span>git<span class="w"> </span>status<span class="w">                        </span><span class="c1"># view the changes</span>
+<a id="rest_code_41ed54623e6e413f8fd61143675eebcd-2" name="rest_code_41ed54623e6e413f8fd61143675eebcd-2" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_41ed54623e6e413f8fd61143675eebcd-2"></a>$<span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>.<span class="w">                         </span><span class="c1"># add all the changes</span>
+<a id="rest_code_41ed54623e6e413f8fd61143675eebcd-3" name="rest_code_41ed54623e6e413f8fd61143675eebcd-3" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_41ed54623e6e413f8fd61143675eebcd-3"></a>$<span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s1">'a description of the changes'</span>
+<a id="rest_code_41ed54623e6e413f8fd61143675eebcd-4" name="rest_code_41ed54623e6e413f8fd61143675eebcd-4" href="/posts/deploying-dash-application-to-heroku-for-freebsd/#rest_code_41ed54623e6e413f8fd61143675eebcd-4"></a>$<span class="w"> </span>git<span class="w"> </span>push<span class="w"> </span>heroku<span class="w"> </span>master
+</pre></div>
+</blockquote>
+</section>
+</section>
+<section id="references">
+<h2>References</h2>
+<p><a class="reference external" href="https://dash.plotly.com/deployment">Deploying Dash Apps</a></p>
+<p><a class="reference external" href="https://devcenter.heroku.com/articles/getting-started-with-python">Getting Started on Heroku with Python</a></p>
+<p><a class="reference external" href="https://github.com/francoisstamant/dash_heroku_deployment">dash_heroku_deployment</a></p>
+</section>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/recap-on-2020/" class="u-url">Recap on 2020</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/recap-on-2020/" rel="bookmark">
+            <time class="published dt-published" datetime="2020-12-30T17:26:04+08:00" itemprop="datePublished" title="30 Dec 2020">30 Dec 2020</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>Looking back on 2020, these are some of the things I have done.</p>
+<blockquote>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="/posts/3dbuzz-is-closing-down/">Created a scraper for the page 3DBuzz</a></p></li>
+<li><p><a class="reference external" href="/posts/my-new-arch-set-up/">Installed arch on my old Lenovo</a></p></li>
+<li><p><a class="reference external" href="/posts/from-linux-to-bsds/">Decided to try out FreeBSD</a></p></li>
+<li><p><a class="reference external" href="/posts/tisc-ctf-challenge-2020/">Joined my first CTF challenge</a></p></li>
+</ol>
+</blockquote>
+<p>So far this year have been quite fruitful for me in terms of personal growth and experience. Looking forward to another year of growth and learning.
+My biggest takeaway for year 2020 was to gave myself another chance and explore a new OS, mainly FreeBSD. I really like everything about it. I think
+it is a fairly stable OS. Cheers, have a happy new year.</p>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/setting-up-chinese-pinyin-on-my-freebsd/" class="u-url">Setting up Chinese Pinyin on my FreeBSD</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/setting-up-chinese-pinyin-on-my-freebsd/" rel="bookmark">
+            <time class="published dt-published" datetime="2020-12-06T10:27:45+08:00" itemprop="datePublished" title="06 Dec 2020">06 Dec 2020</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>A few days earlier, I was wondering if I can set up pinyin input on my FreeBSD machines. After some research, big thanks to outpaddling on his post on the <a class="reference external" href="https://forums.freebsd.org/threads/chinese-input-method-with-fcitx.67149/">FreeBSD forum</a> for pointing me in the right direction.
+I was able to get it to work. Here is the guide to set up pinyin on your FreeBSD machine.</p>
+<p>First, install the chinese fonts,</p>
+<div class="code"><pre class="code shell"><a id="rest_code_f9b7830cbddd412f89894210e7a41a4e-1" name="rest_code_f9b7830cbddd412f89894210e7a41a4e-1" href="/posts/setting-up-chinese-pinyin-on-my-freebsd/#rest_code_f9b7830cbddd412f89894210e7a41a4e-1"></a>$<span class="w"> </span>doas<span class="w"> </span>pkg<span class="w"> </span>install<span class="w"> </span>zh-CJKUnifonts<span class="w"> </span>zh-font-std<span class="w"> </span>zh-opendesktop-fonts<span class="w"> </span>zh-CNS11643-font<span class="w"> </span>zh-kcfonts
+</pre></div>
+<p>Next, install the input engine, here we are going to use fcitx. As per recommendation from the original poster, it seems that libpinyin and sunpinyin works well.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_05f72379ed9449c09c6e3724542db1ce-1" name="rest_code_05f72379ed9449c09c6e3724542db1ce-1" href="/posts/setting-up-chinese-pinyin-on-my-freebsd/#rest_code_05f72379ed9449c09c6e3724542db1ce-1"></a>$<span class="w"> </span>doas<span class="w"> </span>pkg<span class="w"> </span>install<span class="w"> </span>fcitx-qt5<span class="w"> </span>zh-fcitx-configtool<span class="w"> </span>zh-fcitx-libpinyin<span class="w"> </span>zh-fcitx-sunpinyin
+</pre></div>
+<p>After installation is done, add the following lines to your .xinitrc.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_7fdb2397273c4c4aaf13ba865c1669d0-1" name="rest_code_7fdb2397273c4c4aaf13ba865c1669d0-1" href="/posts/setting-up-chinese-pinyin-on-my-freebsd/#rest_code_7fdb2397273c4c4aaf13ba865c1669d0-1"></a><span class="nv">XMODIFIERS</span><span class="o">=</span><span class="s1">'@im=fcitx'</span>
+<a id="rest_code_7fdb2397273c4c4aaf13ba865c1669d0-2" name="rest_code_7fdb2397273c4c4aaf13ba865c1669d0-2" href="/posts/setting-up-chinese-pinyin-on-my-freebsd/#rest_code_7fdb2397273c4c4aaf13ba865c1669d0-2"></a><span class="nv">GTK_IM_MODULE</span><span class="o">=</span>fcitx
+<a id="rest_code_7fdb2397273c4c4aaf13ba865c1669d0-3" name="rest_code_7fdb2397273c4c4aaf13ba865c1669d0-3" href="/posts/setting-up-chinese-pinyin-on-my-freebsd/#rest_code_7fdb2397273c4c4aaf13ba865c1669d0-3"></a><span class="nv">GTK3_IM_MODULE</span><span class="o">=</span>fcitx
+<a id="rest_code_7fdb2397273c4c4aaf13ba865c1669d0-4" name="rest_code_7fdb2397273c4c4aaf13ba865c1669d0-4" href="/posts/setting-up-chinese-pinyin-on-my-freebsd/#rest_code_7fdb2397273c4c4aaf13ba865c1669d0-4"></a><span class="nv">QT4_IM_MODULE</span><span class="o">=</span>fcitx<span class="w"> </span><span class="c1"># Or use qtconfig to change</span>
+<a id="rest_code_7fdb2397273c4c4aaf13ba865c1669d0-5" name="rest_code_7fdb2397273c4c4aaf13ba865c1669d0-5" href="/posts/setting-up-chinese-pinyin-on-my-freebsd/#rest_code_7fdb2397273c4c4aaf13ba865c1669d0-5"></a><span class="nb">export</span><span class="w"> </span>XMODIFIERS<span class="w"> </span>GTK_IM_MODULE<span class="w"> </span>GTK3_IM_MODULE<span class="w"> </span>QT4_IM_MODULE
+</pre></div>
+<p>Lastly for those using a desktop environment, you can add the fcitx to startup by doing the following,</p>
+<div class="code"><pre class="code shell"><a id="rest_code_56cdf17f6f1c4781ade17c3fbcf14a14-1" name="rest_code_56cdf17f6f1c4781ade17c3fbcf14a14-1" href="/posts/setting-up-chinese-pinyin-on-my-freebsd/#rest_code_56cdf17f6f1c4781ade17c3fbcf14a14-1"></a>$<span class="w"> </span>ln<span class="w"> </span>-s<span class="w"> </span>/usr/local/share/applications/fcitx.desktop<span class="w"> </span>~/.config/autostart
+</pre></div>
+<p>And now you can restart X and see if fcitx is loaded. On my mate session, there is now an additional keyboard icon (in the middle) on my panel.</p>
+<img alt="/images/setting-up-chinese-pinyin-on-my-freebsd_0.png" src="/images/setting-up-chinese-pinyin-on-my-freebsd_0.png">
+<p>Right click on it to open the panel and choose "Configure Current Input Method".</p>
+<img alt="/images/setting-up-chinese-pinyin-on-my-freebsd_1.png" src="/images/setting-up-chinese-pinyin-on-my-freebsd_1.png">
+<p>Make sure "Only Show Current Language" is unchecked and scroll to Chinese (China) and select Pinyin (LibPinyin) or Sunpinyun. To add the input, click on the right arrow and make sure the selected input
+is added to current input.</p>
+<img alt="/images/setting-up-chinese-pinyin-on-my-freebsd_2.png" src="/images/setting-up-chinese-pinyin-on-my-freebsd_2.png">
+<p>Now to test if the pinyin input works, you can open a text editior, and click on the fcitx icon to toggle between english and chinese pinyin input method. You can start typing and a small suggestion box should appear.</p>
+<img alt="/images/setting-up-chinese-pinyin-on-my-freebsd_3.png" src="/images/setting-up-chinese-pinyin-on-my-freebsd_3.png">
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/using-webcam-on-firefox-in-freebsd/" class="u-url">Using webcam on Firefox in FreeBSD</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/using-webcam-on-firefox-in-freebsd/" rel="bookmark">
+            <time class="published dt-published" datetime="2020-11-17T20:20:04+08:00" itemprop="datePublished" title="17 Nov 2020">17 Nov 2020</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>Using webcam is a common thing to do on a laptop and it is not hard to set up in FreeBSD as well.</p>
+<p>First go ahead and install webcamd,</p>
+<div class="code"><pre class="code sh"><a id="rest_code_89ce7088e9154f5683d13ce7d04f9972-1" name="rest_code_89ce7088e9154f5683d13ce7d04f9972-1" href="/posts/using-webcam-on-firefox-in-freebsd/#rest_code_89ce7088e9154f5683d13ce7d04f9972-1"></a>$<span class="w"> </span>doas<span class="w"> </span>pkg<span class="w"> </span>install<span class="w"> </span>webcamd
+</pre></div>
+<p>According to the <a class="reference external" href="https://www.freebsd.org/cgi/man.cgi?query=webcamd&amp;sektion=8&amp;manpath=freebsd-release-ports">man page</a>, webcamd is a daemon that provides access to webcam devices and such. According to the man pages, we need to load
+the cuse kernel module as well as start the webcamd daemon.</p>
+<div class="code"><pre class="code sh"><a id="rest_code_7460ff95e84940e5bc6392fa1cd416b1-1" name="rest_code_7460ff95e84940e5bc6392fa1cd416b1-1" href="/posts/using-webcam-on-firefox-in-freebsd/#rest_code_7460ff95e84940e5bc6392fa1cd416b1-1"></a><span class="c1"># Adding cuse to bootloader and webcamd to start up services</span>
+<a id="rest_code_7460ff95e84940e5bc6392fa1cd416b1-2" name="rest_code_7460ff95e84940e5bc6392fa1cd416b1-2" href="/posts/using-webcam-on-firefox-in-freebsd/#rest_code_7460ff95e84940e5bc6392fa1cd416b1-2"></a>$<span class="w"> </span>doas<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">'cuse_load="YES"'</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/boot/loader.conf
+<a id="rest_code_7460ff95e84940e5bc6392fa1cd416b1-3" name="rest_code_7460ff95e84940e5bc6392fa1cd416b1-3" href="/posts/using-webcam-on-firefox-in-freebsd/#rest_code_7460ff95e84940e5bc6392fa1cd416b1-3"></a>$<span class="w"> </span>doas<span class="w"> </span>sysrc<span class="w"> </span><span class="nv">webcamd_enable</span><span class="o">=</span><span class="s2">"YES"</span>
+</pre></div>
+<p>To load the kernel modules and the webcamd service without reboot, you can do the following,</p>
+<div class="code"><pre class="code sh"><a id="rest_code_8ae7e336376642b69afde57ce94261ec-1" name="rest_code_8ae7e336376642b69afde57ce94261ec-1" href="/posts/using-webcam-on-firefox-in-freebsd/#rest_code_8ae7e336376642b69afde57ce94261ec-1"></a>$<span class="w"> </span>doas<span class="w"> </span>kldload<span class="w"> </span>cuse
+<a id="rest_code_8ae7e336376642b69afde57ce94261ec-2" name="rest_code_8ae7e336376642b69afde57ce94261ec-2" href="/posts/using-webcam-on-firefox-in-freebsd/#rest_code_8ae7e336376642b69afde57ce94261ec-2"></a>$<span class="w"> </span>doas<span class="w"> </span>service<span class="w"> </span>webcamd<span class="w"> </span>start
+</pre></div>
+<p>After which, you can go online with your Firefox and do a webcam test online. I am relatively surprised as how easy it is to set up webcam support
+on my FreeBSD. A shoutout to this <a class="reference external" href="https://www.davidschlachter.com/misc/freebsd-webcam-browser">David Schlachter's page</a> for providing me the initial steps to setting up webcam on FreeBSD.</p>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/trying-out-a-new-light-theme/" class="u-url">Trying out a new light theme</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/trying-out-a-new-light-theme/" rel="bookmark">
+            <time class="published dt-published" datetime="2020-10-07T20:47:06+08:00" itemprop="datePublished" title="07 Oct 2020">07 Oct 2020</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>Recently I came across an article by Brent. In the article, he talks about how light themes are better and easier on the eyes. So here I am I created a light theme for my blog, I just switched the colors of background and foreground of the old palette (I got from Lospec).</p>
+<p>In addition, the blog is not the only thing getting a new face lift. I have decided to use the light theme (gruvbox) on my desktop environment, xterm as well as my neovim.</p>
+<p>Here is what my new desktop looks like now.</p>
+<img alt="/images/trying-out-a-new-light-theme_0.png" src="/images/trying-out-a-new-light-theme_0.png">
+<p>Which I like very much right now. I am currently using Herbstluftwm as my tiling manager and dzen2 as my statusbar.</p>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/setting-up-a-single-user-xfce-environment-for-freebsd/" class="u-url">Setting up a single user XFCE environment for FreeBSD</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/setting-up-a-single-user-xfce-environment-for-freebsd/" rel="bookmark">
+            <time class="published dt-published" datetime="2020-09-15T22:30:59+08:00" itemprop="datePublished" title="15 Sep 2020">15 Sep 2020</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>Recently I wanted to install XFCE on an old laptop of mine for someone who was not very familiar with the command line interface. I had
+previously installed a tiling manager but I think having a desktop environment will be more user friendly. In addition, there will most likely
+be the only person using the machine so I decided to set it up that way.</p>
+<p>This are my notes on how to set up the xfce desktop environment, feel free to install your own desktop environment of choice. This guide will
+assume that you have just installed FreeBSD with a user which is (at least) added to the operator group. I am also using tcsh as my login
+shell.</p>
+<section id="steps">
+<h2>Steps</h2>
+<ol class="arabic simple">
+<li><p>Install xfce</p></li>
+<li><p>Enable shutdown option in xfce</p></li>
+<li><p>Enable autologin to xfce</p></li>
+</ol>
+<section id="install-xfce">
+<h3>1. Install xfce</h3>
+<p>Proceed to install xfce or your desktop environment of choice. Before that, ensure that Xorg is also installed.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_bcaae36dede5403b85cbfc92dda265b4-1" name="rest_code_bcaae36dede5403b85cbfc92dda265b4-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_bcaae36dede5403b85cbfc92dda265b4-1"></a>$<span class="w"> </span>doas<span class="w"> </span>pkg<span class="w"> </span>update
+<a id="rest_code_bcaae36dede5403b85cbfc92dda265b4-2" name="rest_code_bcaae36dede5403b85cbfc92dda265b4-2" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_bcaae36dede5403b85cbfc92dda265b4-2"></a>$<span class="w"> </span>doas<span class="w"> </span>pkg<span class="w"> </span>install<span class="w"> </span>xorg<span class="w"> </span>xfce
+</pre></div>
+</section>
+<section id="enable-shutdown-option-in-xfce">
+<h3>2. Enable shutdown option in xfce</h3>
+<p>By default, after you install xfce and start the xfce, one thing you will notice is that when you click on your name, there is only an option
+for logout. Shutdown/restart/hibernate seems to be grayed out. To enable the buttons, you will have to do the following.</p>
+<ul class="simple">
+<li><p>Make sure myuser is in group operator</p></li>
+<li><p>Enable dbus in rc.conf</p></li>
+<li><p>Adding rules in polkit</p></li>
+</ul>
+<section id="make-sure-myuser-is-in-group-operator">
+<h4>Make sure myuser is in group operator</h4>
+<p>Make sure myuser using the desktop environment is in group operator. This can be checked with the following command,</p>
+<div class="code"><pre class="code shell"><a id="rest_code_bf101ccbd1694298af6f0d0e0e3fbb3b-1" name="rest_code_bf101ccbd1694298af6f0d0e0e3fbb3b-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_bf101ccbd1694298af6f0d0e0e3fbb3b-1"></a>$<span class="w"> </span>id<span class="w"> </span>myuser
+<a id="rest_code_bf101ccbd1694298af6f0d0e0e3fbb3b-2" name="rest_code_bf101ccbd1694298af6f0d0e0e3fbb3b-2" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_bf101ccbd1694298af6f0d0e0e3fbb3b-2"></a><span class="nv">uid</span><span class="o">=</span><span class="m">1001</span><span class="o">(</span>myuser<span class="o">)</span><span class="w"> </span><span class="nv">gid</span><span class="o">=</span><span class="m">1001</span><span class="o">(</span>myuser<span class="o">)</span><span class="w"> </span><span class="nv">groups</span><span class="o">=</span><span class="m">1001</span><span class="o">(</span>myuser<span class="o">)</span>,5<span class="o">(</span>operator<span class="o">)</span>
+</pre></div>
+<p>Otherwise if myuser is not in the group, use the following to add it to the group,</p>
+<div class="code"><pre class="code shell"><a id="rest_code_08304024b94e4136bd8cccd566e718f9-1" name="rest_code_08304024b94e4136bd8cccd566e718f9-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_08304024b94e4136bd8cccd566e718f9-1"></a>$<span class="w"> </span>doas<span class="w"> </span>pw<span class="w"> </span>groupmod<span class="w"> </span>operator<span class="w"> </span>-m<span class="w"> </span>myuser
+</pre></div>
+<p>Verify it again using the id command.</p>
+</section>
+<section id="enable-dbus-in-rc-conf">
+<h4>Enable dbus in rc.conf</h4>
+<p>D-Bus is installed as part of the xfce package according to the FreeBSD <a class="reference external" href="https://www.freebsd.org/doc/handbook/x11-wm.html">handbook</a> and can be
+enabled in your rc.conf by adding the following line to your rc.conf.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_247470c5bce64fb6bf40b5a6b3e2e6e9-1" name="rest_code_247470c5bce64fb6bf40b5a6b3e2e6e9-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_247470c5bce64fb6bf40b5a6b3e2e6e9-1"></a>$<span class="w"> </span>doas<span class="w"> </span>sysrc<span class="w"> </span><span class="nv">dbus_enable</span><span class="o">=</span><span class="s2">"YES"</span>
+</pre></div>
+</section>
+<section id="adding-rules-in-polkit">
+<h4>Adding rules in polkit</h4>
+<p>Add a new rule to polkit, assuming shutdown.rules does not exist,</p>
+<div class="code"><pre class="code shell"><a id="rest_code_53d1d3ccaf7743d284a4770294a699a3-1" name="rest_code_53d1d3ccaf7743d284a4770294a699a3-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_53d1d3ccaf7743d284a4770294a699a3-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/usr/local/etc/polkit-1/rules.d
+<a id="rest_code_53d1d3ccaf7743d284a4770294a699a3-2" name="rest_code_53d1d3ccaf7743d284a4770294a699a3-2" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_53d1d3ccaf7743d284a4770294a699a3-2"></a>$<span class="w"> </span>doas<span class="w"> </span>touch<span class="w"> </span>shutdown.rules
+</pre></div>
+<p>Paste the contents below to the file shutdown.rules</p>
+<div class="code"><pre class="code shell"><a id="rest_code_8f42c9c502134ce8b72a76206857f927-1" name="rest_code_8f42c9c502134ce8b72a76206857f927-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-1"></a><span class="c1"># shutdown.rules</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-2" name="rest_code_8f42c9c502134ce8b72a76206857f927-2" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-2"></a>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-3" name="rest_code_8f42c9c502134ce8b72a76206857f927-3" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-3"></a>polkit.addRule<span class="o">(</span><span class="k">function</span><span class="w"> </span><span class="o">(</span>action,<span class="w"> </span>subject<span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-4" name="rest_code_8f42c9c502134ce8b72a76206857f927-4" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-4"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">((</span>action.id<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"org.freedesktop.consolekit.system.restart"</span><span class="w"> </span><span class="o">||</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-5" name="rest_code_8f42c9c502134ce8b72a76206857f927-5" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-5"></a><span class="w">  </span>action.id<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"org.freedesktop.consolekit.system.stop"</span><span class="o">)</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-6" name="rest_code_8f42c9c502134ce8b72a76206857f927-6" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-6"></a><span class="w">  </span><span class="o">&amp;&amp;</span><span class="w"> </span>subject.isInGroup<span class="o">(</span><span class="s2">"operator"</span><span class="o">))</span><span class="w"> </span><span class="o">{</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-7" name="rest_code_8f42c9c502134ce8b72a76206857f927-7" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-7"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span>polkit.Result.YES<span class="p">;</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-8" name="rest_code_8f42c9c502134ce8b72a76206857f927-8" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-8"></a><span class="w">  </span><span class="o">}</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-9" name="rest_code_8f42c9c502134ce8b72a76206857f927-9" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-9"></a><span class="o">})</span><span class="p">;</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-10" name="rest_code_8f42c9c502134ce8b72a76206857f927-10" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-10"></a>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-11" name="rest_code_8f42c9c502134ce8b72a76206857f927-11" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-11"></a>polkit.addRule<span class="o">(</span><span class="k">function</span><span class="w"> </span><span class="o">(</span>action,<span class="w"> </span>subject<span class="o">)</span><span class="w"> </span><span class="o">{</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-12" name="rest_code_8f42c9c502134ce8b72a76206857f927-12" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-12"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">(</span>action.id<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"org.freedesktop.consolekit.system.suspend"</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-13" name="rest_code_8f42c9c502134ce8b72a76206857f927-13" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-13"></a><span class="w">  </span><span class="o">&amp;&amp;</span><span class="w"> </span>subject.isInGroup<span class="o">(</span><span class="s2">"operator"</span><span class="o">))</span><span class="w"> </span><span class="o">{</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-14" name="rest_code_8f42c9c502134ce8b72a76206857f927-14" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-14"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span>polkit.Result.YES<span class="p">;</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-15" name="rest_code_8f42c9c502134ce8b72a76206857f927-15" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-15"></a><span class="w">  </span><span class="o">}</span>
+<a id="rest_code_8f42c9c502134ce8b72a76206857f927-16" name="rest_code_8f42c9c502134ce8b72a76206857f927-16" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8f42c9c502134ce8b72a76206857f927-16"></a><span class="o">})</span><span class="p">;</span>
+</pre></div>
+<p>Reboot your FreeBSD.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_6e19870340ce47de9b726b50faa79ffa-1" name="rest_code_6e19870340ce47de9b726b50faa79ffa-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_6e19870340ce47de9b726b50faa79ffa-1"></a>$<span class="w"> </span>doas<span class="w"> </span>shutdown<span class="w"> </span>-r<span class="w"> </span>now
+</pre></div>
+<p>Log into myuser and start xfce.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_8343f830720c400d8ae8198e175dded0-1" name="rest_code_8343f830720c400d8ae8198e175dded0-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_8343f830720c400d8ae8198e175dded0-1"></a>$<span class="w"> </span>startxfce4
+</pre></div>
+<p>When clicking log out, the shutdown/restart should be enabled now instead of greyed out.</p>
+<img alt="/images/setting-up-xfce-environment-for-single-user_0.PNG" src="/images/setting-up-xfce-environment-for-single-user_0.PNG">
+<p>Next we are going to set up auto login for myuser.</p>
+</section>
+</section>
+<section id="enable-autologin-to-xfce">
+<h3>3. Enable autologin to xfce</h3>
+<p>Firstly we copy startxfce4 script to the user's home .xinitrc.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_e85950f1e7bd4ceeac029129adc63dca-1" name="rest_code_e85950f1e7bd4ceeac029129adc63dca-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_e85950f1e7bd4ceeac029129adc63dca-1"></a>$<span class="w"> </span>cp<span class="w"> </span>/usr/local/bin/startxfce4<span class="w"> </span>~/.xinitrc
+</pre></div>
+<p>Next we will edit /etc/gettytab</p>
+<div class="code"><pre class="code shell"><a id="rest_code_137b24f0453d476cbcee3129d83bd640-1" name="rest_code_137b24f0453d476cbcee3129d83bd640-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_137b24f0453d476cbcee3129d83bd640-1"></a>$<span class="w"> </span>doas<span class="w"> </span>vi<span class="w"> </span>/etc/gettytab
+</pre></div>
+<p>And add the following into /etc/gettytab</p>
+<div class="code"><pre class="code shell"><a id="rest_code_d32485d39fac47c1ba4931ffced0c8f1-1" name="rest_code_d32485d39fac47c1ba4931ffced0c8f1-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_d32485d39fac47c1ba4931ffced0c8f1-1"></a>Al<span class="p">|</span>Autologin<span class="w"> </span>myuser:<span class="se">\</span>
+<a id="rest_code_d32485d39fac47c1ba4931ffced0c8f1-2" name="rest_code_d32485d39fac47c1ba4931ffced0c8f1-2" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_d32485d39fac47c1ba4931ffced0c8f1-2"></a><span class="w">   </span>:al<span class="o">=</span>myuser:tc<span class="o">=</span>Pc:
+</pre></div>
+<p>Next we will edit /etc/ttys</p>
+<div class="code"><pre class="code shell"><a id="rest_code_3c7a3cb931ec4d668df3d772f1f20f83-1" name="rest_code_3c7a3cb931ec4d668df3d772f1f20f83-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_3c7a3cb931ec4d668df3d772f1f20f83-1"></a>$<span class="w"> </span>doas<span class="w"> </span>vi<span class="w"> </span>/etc/ttys
+</pre></div>
+<p>And change the following lines into /etc/ttys, from</p>
+<div class="code"><pre class="code shell"><a id="rest_code_772a2836531d41d3ab4ad66c9862d6f9-1" name="rest_code_772a2836531d41d3ab4ad66c9862d6f9-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_772a2836531d41d3ab4ad66c9862d6f9-1"></a>ttyv0<span class="w">    </span><span class="s2">"/usr/libexec/getty Pc"</span><span class="w">   </span>xterm<span class="w">   </span>onifexists<span class="w">  </span>secure
+</pre></div>
+<p>to the following</p>
+<div class="code"><pre class="code shell"><a id="rest_code_c5b79b6102204802806f14be1633edc4-1" name="rest_code_c5b79b6102204802806f14be1633edc4-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_c5b79b6102204802806f14be1633edc4-1"></a>ttyv0<span class="w">    </span><span class="s2">"/usr/libexec/getty Al"</span><span class="w">   </span>xterm<span class="w">   </span>onifexists<span class="w">  </span>secure
+</pre></div>
+<p>When you have completed the above, your FreeBSD should be able to login automatically to myuser after you reboot. You can verify by rebooting,</p>
+<div class="code"><pre class="code shell"><a id="rest_code_dfbe6b13d620420b933596d33127f0e7-1" name="rest_code_dfbe6b13d620420b933596d33127f0e7-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_dfbe6b13d620420b933596d33127f0e7-1"></a>$<span class="w"> </span>doas<span class="w"> </span>shutdown<span class="w"> </span>-r<span class="w"> </span>now
+</pre></div>
+<p>and when you see myuser logged in automatically, the configuration is correct. Now the final step is to add a .login script to execute
+automatically whenever we are logged in.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_1fa33210f87a4e67ae536de353dbcb0d-1" name="rest_code_1fa33210f87a4e67ae536de353dbcb0d-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_1fa33210f87a4e67ae536de353dbcb0d-1"></a>$<span class="w"> </span>vi<span class="w"> </span>.login
+</pre></div>
+<p>and add the following lines, (note: I am using tcsh as my shell for myuser, change the script accordingly to suit your shell)</p>
+<div class="code"><pre class="code shell"><a id="rest_code_817db086b55647898bdfe11dde1e2220-1" name="rest_code_817db086b55647898bdfe11dde1e2220-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_817db086b55647898bdfe11dde1e2220-1"></a><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="nv">$tty</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"ttyv0"</span><span class="o">)</span><span class="w"> </span><span class="k">then</span>
+<a id="rest_code_817db086b55647898bdfe11dde1e2220-2" name="rest_code_817db086b55647898bdfe11dde1e2220-2" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_817db086b55647898bdfe11dde1e2220-2"></a><span class="w">  </span><span class="nb">echo</span><span class="w"> </span>Starting<span class="w"> </span>xfce...
+<a id="rest_code_817db086b55647898bdfe11dde1e2220-3" name="rest_code_817db086b55647898bdfe11dde1e2220-3" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_817db086b55647898bdfe11dde1e2220-3"></a><span class="w">  </span>startx
+<a id="rest_code_817db086b55647898bdfe11dde1e2220-4" name="rest_code_817db086b55647898bdfe11dde1e2220-4" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_817db086b55647898bdfe11dde1e2220-4"></a>endif
+</pre></div>
+<p>Afterwards, you can test if the .login script works by logging out.</p>
+<div class="code"><pre class="code shell"><a id="rest_code_4a56c2ca4f014227919f0416ad4f5202-1" name="rest_code_4a56c2ca4f014227919f0416ad4f5202-1" href="/posts/setting-up-a-single-user-xfce-environment-for-freebsd/#rest_code_4a56c2ca4f014227919f0416ad4f5202-1"></a>$<span class="w"> </span><span class="nb">exit</span>
+</pre></div>
+<p>This will let it logout and because of the autologin behavior, it should log back into myuser and run the .login script. If the all else
+succeed, you will be able to see a xfce environment with shutdown/restart/suspend buttons working.</p>
+<p>Here are a list of resources that I got my scripts and configurations from</p>
+<p>FreeBSD Handbook</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.freebsd.org/doc/handbook/x11-wm.html">x11-wm</a></p></li>
+</ul>
+<p>FreeBSD Forums</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://forums.freebsd.org/threads/display-manager.47305/#post-264818">Display Manager</a></p></li>
+<li><p><a class="reference external" href="https://forums.freebsd.org/threads/trouble-calling-startx-in-start-up-script.22304/#post-125787">Trouble calling 'startx' in Start-Up script</a></p></li>
+<li><p><a class="reference external" href="https://forums.freebsd.org/threads/xfce4-no-abiltiy-to-shutdown-and-reboot-that-went-away.72671/">xfce4 no abiltiy to shutdown and reboot that went away</a></p></li>
+</ul>
+</section>
+</section>
+    </div>
+    --></article>
+</div>
+
+        <nav class="postindexpager"><ul class="pager">
+<li class="next">
+                <a href="index-5.html" rel="next">Older posts</a>
+            </li>
+        </ul></nav></main><footer id="footer"><div>
+                <a href="mailto:zihe.goh@gmail.com">
+                    <i class="fas fa-lg fa-at"></i>
+                </a>
+
+                <a href="https://github.com/zhgoh" target="_blank">
+                    <i class="fab fa-lg fa-github-alt"></i>
+                </a>
+
+                <a href="https://gitlab.com/zhgoh" target="_blank">
+                    <i class="fab fa-lg fa-gitlab"></i>
+                </a>
+
+                <a href="https://www.linkedin.com/in/zihegoh/" target="blank">
+                    <i class="fab fa-lg fa-linkedin"></i>
+                </a>
+
+                <a href="/Zi%20He_CV.pdf">
+                    <i class="fas fa-lg fa-file-pdf"></i>
+                </a>
+            </div>
+
+            <div>
+                <p>© 2024         <a href="mailto:zihe.goh@gmail.com">zhgoh</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            </div>
+            
+        </footer>
+</div>
+    
+            <script src="assets/js/baguetteBox.min.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

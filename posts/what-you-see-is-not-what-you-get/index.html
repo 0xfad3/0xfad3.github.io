@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>What you see is not what you get | 127.0.0.1</title>
+<link href="../../assets/css/baguetteBox.min.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/rst_base.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/nikola_rst.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/theme.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+<link href="../../assets/css/custom.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://zhgoh.github.io/posts/what-you-see-is-not-what-you-get/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="zhgoh">
+<link rel="prev" href="../installing-kali-linux-on-freebsd-bhyve/" title="Installing Kali Linux on FreeBSD bhyve" type="text/html">
+<link rel="next" href="../how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/" title="How to ssh into VMware Player/VirtualBox (*BSD/Linux guest from Windows host)" type="text/html">
+<meta property="og:site_name" content="127.0.0.1">
+<meta property="og:title" content="What you see is not what you get">
+<meta property="og:url" content="https://zhgoh.github.io/posts/what-you-see-is-not-what-you-get/">
+<meta property="og:description" content="This is mostly a rant of my experience working with Unicodes. Do not get me wrong, I love unicodes and the introduction of them have really changed the way we typed text, ranging from
+having non-engli">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-03-28T22:05:47+08:00">
+</head>
+<body>
+    <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+    <div id="container">
+         
+    <header id="header"><h1 id="brand"><a href="https://zhgoh.github.io/" title="127.0.0.1" rel="home">
+
+        <span id="blog-title">127.0.0.1</span>
+    </a></h1>
+
+        
+
+        
+    <nav id="menu"><ul>
+<li><a href="../../pages/about/index.html">About</a></li>
+                <li><a href="../../index.html">Blog</a></li>
+                <li><a href="../../pages/projects/index.html">Projects</a></li>
+
+    
+
+    
+    
+    </ul></nav></header><main id="content"><article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">What you see is not what you get</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
+                    zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="." rel="bookmark">
+            <time class="published dt-published" datetime="2022-03-28T22:05:47+08:00" itemprop="datePublished" title="28 Mar 2022">28 Mar 2022</time></a>
+            </p>
+            
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>This is mostly a rant of my experience working with Unicodes. Do not get me wrong, I love unicodes and the introduction of them have really changed the way we typed text, ranging from
+having non-english characters to supporting Emojis. What I do not understand is how inconsistent this experience seems to be.</p>
+<p>For a little bit of context, this is what I was doing. I was editing my document on Google Docs, and feeling a little cheeky, I decided to use some emojis, 😄. What could ever go wrong
+with using them right? We are used to seeing it on our phones, messages, emails, desktop. So back to our little story, I decided to use some emojis, it does not matter which emoji but
+I am liking that particular design, which seems to be using Google's emoticon since it is rendered with Google Docs.</p>
+<p>So here comes the part that caught me by surprise. I wanted to get a PDF document of the document I was working on, so I decided to use the download as PDF functionality in Google Docs.
+One can only assume that the PDF will exactly what you see is what you get, right? It turns out that, the downloaded PDF uses Microsoft's version of those emoticons, which happens to be
+slightly different from those used by Google.</p>
+<p>In my mind, I was wondering, why did Google render the emoticon using Google's own style but uses the native OS's style when downloaded. Not sure if that's intended but I think it is
+definitely not intuitive. I understand Google Docs is no tool for designers, however all I am asking for is some consistency.</p>
+<p>Anyways, later I did find a workaround to get the PDF document with the "correct" style of emoticon as I saw on Google Docs. This so called workaround does require you to be using some
+form of Chrome browsers which I assume most of you would be using by now. The way to get the PDF with Google's emoticon, is to click on Print.</p>
+<img alt="/images/what-you-see-is-not-what-you-get_0.png" src="../../images/what-you-see-is-not-what-you-get_0.png"><p>After which, make sure that the options Save as PDF is selected instead of Microsoft Print to PDF. Choosing that option will render the emoticon as Microsoft's style. The PDF should now
+have the proper emoticon showing. Hopefully that works for you.</p>
+<img alt="/images/what-you-see-is-not-what-you-get_1.png" src="../../images/what-you-see-is-not-what-you-get_1.png">
+</div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../installing-kali-linux-on-freebsd-bhyve/" rel="prev" title="Installing Kali Linux on FreeBSD bhyve">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../how-to-ssh-into-vmware-player-virtualbox-bsd-linux-guest-from-windows-host/" rel="next" title="How to ssh into VMware Player/VirtualBox (*BSD/Linux guest from Windows host)">Next post</a>
+            </li>
+        </ul></nav></aside></article></main><footer id="footer"><div>
+                <a href="mailto:zihe.goh@gmail.com">
+                    <i class="fas fa-lg fa-at"></i>
+                </a>
+
+                <a href="https://github.com/zhgoh" target="_blank">
+                    <i class="fab fa-lg fa-github-alt"></i>
+                </a>
+
+                <a href="https://gitlab.com/zhgoh" target="_blank">
+                    <i class="fab fa-lg fa-gitlab"></i>
+                </a>
+
+                <a href="https://www.linkedin.com/in/zihegoh/" target="blank">
+                    <i class="fab fa-lg fa-linkedin"></i>
+                </a>
+
+                <a href="/Zi%20He_CV.pdf">
+                    <i class="fas fa-lg fa-file-pdf"></i>
+                </a>
+            </div>
+
+            <div>
+                <p>© 2024         <a href="mailto:zihe.goh@gmail.com">zhgoh</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            </div>
+            
+        </footer>
+</div>
+    
+            <script src="../../assets/js/baguetteBox.min.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

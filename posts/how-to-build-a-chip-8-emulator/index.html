@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>How to build a CHIP-8 emulator? | 127.0.0.1</title>
+<link href="../../assets/css/baguetteBox.min.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/rst_base.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/nikola_rst.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/theme.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+<link href="../../assets/css/custom.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://zhgoh.github.io/posts/how-to-build-a-chip-8-emulator/">
+<!--[if lt IE 9]><script src="../../assets/js/html5shiv-printshiv.min.js"></script><![endif]--><meta name="author" content="zhgoh">
+<link rel="prev" href="../porting-space-invaders-clone-from-c%2B%2B-to-d/" title="Porting Space Invaders clone from C++ to D" type="text/html">
+<link rel="next" href="../make-for-small-projects/" title="Make for small projects" type="text/html">
+<meta property="og:site_name" content="127.0.0.1">
+<meta property="og:title" content="How to build a CHIP-8 emulator?">
+<meta property="og:url" content="https://zhgoh.github.io/posts/how-to-build-a-chip-8-emulator/">
+<meta property="og:description" content="So, a couple of weeks ago, I came across this post which talks about making a Game Boy emulator. In the introduction,
+CHIP-8 was introduced as a first project to understand emulation. I decided to bui">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2018-08-03T10:14:04+08:00">
+</head>
+<body>
+    <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+    <div id="container">
+         
+    <header id="header"><h1 id="brand"><a href="https://zhgoh.github.io/" title="127.0.0.1" rel="home">
+
+        <span id="blog-title">127.0.0.1</span>
+    </a></h1>
+
+        
+
+        
+    <nav id="menu"><ul>
+<li><a href="../../pages/about/index.html">About</a></li>
+                <li><a href="../../index.html">Blog</a></li>
+                <li><a href="../../pages/projects/index.html">Projects</a></li>
+
+    
+
+    
+    
+    </ul></nav></header><main id="content"><article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">How to build a CHIP-8 emulator?</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
+                    zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="." rel="bookmark">
+            <time class="published dt-published" datetime="2018-08-03T10:14:04+08:00" itemprop="datePublished" title="03 Aug 2018">03 Aug 2018</time></a>
+            </p>
+            
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <p>So, a couple of weeks ago, I came across this <a class="reference external" href="https://cturt.github.io/cinoop.html">post</a> which talks about making a Game Boy emulator. In the introduction,
+CHIP-8 was introduced as a first project to understand emulation. I decided to build one myself, so I have decided to reuse some
+code I had for the <a class="reference external" href="https://github.com/zgoh/d_space_invaders">Space Invaders</a>.</p>
+<p>The CHIP-8 emulation is not very hard, as suggested author in the introduction and all the
+required instructions to implement can be found in the <a class="reference external" href="https://en.wikipedia.org/wiki/CHIP-8">Wikipedia</a> page. Also I had some help about getting started with this <a class="reference external" href="http://www.multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/">guide</a>.</p>
+<p>In this guide, I will explain how to build one from scratch.</p>
+<p>Note: I would not be covering how to get the keys and drawing graphics, that would depend on the framework that you use,
+i.e. SDL, GLFW (for my case), GLUT. Also I am writing this guide in D.</p>
+<section id="what-is-chip-8"><h2>What is CHIP-8</h2>
+<p>It's actually a virtual machine created by Joseph Weisbecker in the mid-1970s. As such, it is actually like a mini computer that
+can run instructions and output useful results onto the screen and beep sound (more on this later).</p>
+<p>To start, we have to understand the specifications of this (virtual) machine.</p>
+</section><section id="chip-8-specifications"><h2>CHIP-8 specifications</h2>
+<ul class="simple">
+<li><p>CPU - 2-bytes (16-bit instructions)</p></li>
+</ul>
+<div class="code"><pre class="code d"><a id="rest_code_65fc6272782c48b69e20c4bc32b2fa2d-1" name="rest_code_65fc6272782c48b69e20c4bc32b2fa2d-1" href="#rest_code_65fc6272782c48b69e20c4bc32b2fa2d-1"></a><span class="kt">ushort</span><span class="w"> </span><span class="n">pc</span><span class="p">;</span>
+</pre></div>
+<ul class="simple">
+<li><p>Opcode (instructions) - There are 35 <a class="reference external" href="https://en.wikipedia.org/wiki/CHIP-8#Opcode_table">opcodes</a> which are all 2-bytes (16-bits) long and stored big-endian.</p></li>
+</ul>
+<div class="code"><pre class="code d"><a id="rest_code_4423ab49021d44ee929a47067787e653-1" name="rest_code_4423ab49021d44ee929a47067787e653-1" href="#rest_code_4423ab49021d44ee929a47067787e653-1"></a><span class="kt">ushort</span><span class="w"> </span><span class="n">opcode</span><span class="p">;</span>
+</pre></div>
+<ul class="simple">
+<li><p>Registers - 16 1-byte (8-bit) registers, named from V0 to VF and a 2-bytes I address register.</p></li>
+</ul>
+<div class="code"><pre class="code d"><a id="rest_code_67fb3072541247d593779abca4c61ae1-1" name="rest_code_67fb3072541247d593779abca4c61ae1-1" href="#rest_code_67fb3072541247d593779abca4c61ae1-1"></a><span class="kt">char</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="w"> </span><span class="n">vreg</span><span class="p">;</span>
+<a id="rest_code_67fb3072541247d593779abca4c61ae1-2" name="rest_code_67fb3072541247d593779abca4c61ae1-2" href="#rest_code_67fb3072541247d593779abca4c61ae1-2"></a><span class="kt">ushort</span><span class="w"> </span><span class="n">ireg</span><span class="p">;</span>
+</pre></div>
+<ul class="simple">
+<li><p>Memory - 4K memory, where all memory locations are 1-byte (8-bit where the name is from).</p></li>
+</ul>
+<div class="code"><pre class="code d"><a id="rest_code_086ecea2b52a4733af14236ed2303afa-1" name="rest_code_086ecea2b52a4733af14236ed2303afa-1" href="#rest_code_086ecea2b52a4733af14236ed2303afa-1"></a><span class="kt">char</span><span class="p">[</span><span class="mi">4096</span><span class="p">]</span><span class="w"> </span><span class="n">memory</span><span class="p">;</span>
+</pre></div>
+<ul class="simple">
+<li><p>Stack - The stack is only used to store return addresses when subroutines are called, supports up to 16 levels of nested calls.</p></li>
+</ul>
+<div class="code"><pre class="code d"><a id="rest_code_45f04f16009c433fbaab07fe8389e373-1" name="rest_code_45f04f16009c433fbaab07fe8389e373-1" href="#rest_code_45f04f16009c433fbaab07fe8389e373-1"></a><span class="kt">ushort</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="w"> </span><span class="n">stack</span><span class="p">;</span>
+<a id="rest_code_45f04f16009c433fbaab07fe8389e373-2" name="rest_code_45f04f16009c433fbaab07fe8389e373-2" href="#rest_code_45f04f16009c433fbaab07fe8389e373-2"></a><span class="kt">ushort</span><span class="w"> </span><span class="n">stackPointer</span><span class="p">;</span>
+</pre></div>
+<ul class="simple">
+<li><p>Timers - Delay and Sound timers</p></li>
+</ul>
+<div class="code"><pre class="code d"><a id="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-1" name="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-1" href="#rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-1"></a><span class="c1">// Interrupts and hardware registers, CHIP-8 has none</span>
+<a id="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-2" name="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-2" href="#rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-2"></a><span class="c1">// but there are two timer that count ay 60 Hz,</span>
+<a id="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-3" name="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-3" href="#rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-3"></a><span class="c1">// will count down if set above zero.</span>
+<a id="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-4" name="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-4" href="#rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-4"></a><span class="kt">char</span><span class="w"> </span><span class="n">delayTimer</span><span class="p">;</span>
+<a id="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-5" name="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-5" href="#rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-5"></a>
+<a id="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-6" name="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-6" href="#rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-6"></a><span class="c1">// Buzzer will sound when sound timer reaches 0.</span>
+<a id="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-7" name="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-7" href="#rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-7"></a><span class="kt">char</span><span class="w"> </span><span class="n">soundTimer</span><span class="p">;</span>
+</pre></div>
+<ul class="simple">
+<li><p>Screens - 64 x 32 pixels, color is monochrome. We will eventually have our Graphics API to copy this buffer and draw them on screen.</p></li>
+</ul>
+<div class="code"><pre class="code d"><a id="rest_code_016f287591af471fae3aae58c62e9812-1" name="rest_code_016f287591af471fae3aae58c62e9812-1" href="#rest_code_016f287591af471fae3aae58c62e9812-1"></a><span class="c1">// Screen size: 64 x 32 = 2048 px</span>
+<a id="rest_code_016f287591af471fae3aae58c62e9812-2" name="rest_code_016f287591af471fae3aae58c62e9812-2" href="#rest_code_016f287591af471fae3aae58c62e9812-2"></a><span class="k">const</span><span class="w"> </span><span class="nb">size_t</span><span class="w"> </span><span class="n">screenWidth</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">64</span><span class="p">;</span>
+<a id="rest_code_016f287591af471fae3aae58c62e9812-3" name="rest_code_016f287591af471fae3aae58c62e9812-3" href="#rest_code_016f287591af471fae3aae58c62e9812-3"></a><span class="k">const</span><span class="w"> </span><span class="nb">size_t</span><span class="w"> </span><span class="n">screenHeight</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">32</span><span class="p">;</span>
+<a id="rest_code_016f287591af471fae3aae58c62e9812-4" name="rest_code_016f287591af471fae3aae58c62e9812-4" href="#rest_code_016f287591af471fae3aae58c62e9812-4"></a><span class="kt">char</span><span class="p">[</span><span class="n">screenWidth</span><span class="w"> </span><span class="p">*</span><span class="w"> </span><span class="n">screenHeight</span><span class="p">]</span><span class="w"> </span><span class="n">screen</span><span class="p">;</span>
+</pre></div>
+</section><section id="cpu"><h2>CPU</h2>
+<p>In one cycle of this CPU, we need to Fetch, Decode, Execute, Writeback (FDEW) as well as update the timers in the machine.</p>
+<div class="code"><pre class="code d"><a id="rest_code_f2979f247aa84a7481eb0292a2f68559-1" name="rest_code_f2979f247aa84a7481eb0292a2f68559-1" href="#rest_code_f2979f247aa84a7481eb0292a2f68559-1"></a><span class="kt">void</span><span class="w"> </span><span class="n">CPUCycle</span><span class="p">()</span>
+<a id="rest_code_f2979f247aa84a7481eb0292a2f68559-2" name="rest_code_f2979f247aa84a7481eb0292a2f68559-2" href="#rest_code_f2979f247aa84a7481eb0292a2f68559-2"></a><span class="p">{</span>
+<a id="rest_code_f2979f247aa84a7481eb0292a2f68559-3" name="rest_code_f2979f247aa84a7481eb0292a2f68559-3" href="#rest_code_f2979f247aa84a7481eb0292a2f68559-3"></a><span class="w">    </span><span class="c1">// Fetch opcode</span>
+<a id="rest_code_f2979f247aa84a7481eb0292a2f68559-4" name="rest_code_f2979f247aa84a7481eb0292a2f68559-4" href="#rest_code_f2979f247aa84a7481eb0292a2f68559-4"></a><span class="w">    </span><span class="c1">// Decode opcode, execute, writeback, advance PC if needed</span>
+<a id="rest_code_f2979f247aa84a7481eb0292a2f68559-5" name="rest_code_f2979f247aa84a7481eb0292a2f68559-5" href="#rest_code_f2979f247aa84a7481eb0292a2f68559-5"></a><span class="w">    </span><span class="c1">// Update timers.</span>
+<a id="rest_code_f2979f247aa84a7481eb0292a2f68559-6" name="rest_code_f2979f247aa84a7481eb0292a2f68559-6" href="#rest_code_f2979f247aa84a7481eb0292a2f68559-6"></a><span class="p">}</span>
+</pre></div>
+<p>Firstly, we will need to implement the fetching of opcode.</p>
+<section id="fetching"><h3>Fetching</h3>
+<p>The opcode are stored in memory 2-bytes by 2-bytes, therefore when fetching our opcode, we fetch
+from the PC and PC + 1 and combine them together to form our opcode.</p>
+<div class="code"><pre class="code d"><a id="rest_code_cb6655f825574de3a1e31d434e2e5a82-1" name="rest_code_cb6655f825574de3a1e31d434e2e5a82-1" href="#rest_code_cb6655f825574de3a1e31d434e2e5a82-1"></a><span class="c1">// Fetch opcode</span>
+<a id="rest_code_cb6655f825574de3a1e31d434e2e5a82-2" name="rest_code_cb6655f825574de3a1e31d434e2e5a82-2" href="#rest_code_cb6655f825574de3a1e31d434e2e5a82-2"></a><span class="n">opcode</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">memory</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span><span class="w"> </span><span class="p">&lt;&lt;</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="n">memory</span><span class="p">[</span><span class="n">pc</span><span class="w"> </span><span class="p">+</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span>
+</pre></div>
+</section><section id="decode-execute-writeback"><h3>Decode, Execute, Writeback</h3>
+<p>After we get the opcode, we will now decipher what the instructions mean. Looking at the <a class="reference external" href="https://en.wikipedia.org/wiki/CHIP-8#Opcode_table">opcodes</a> table, we will see that
+the opcode are arranged nicely from 0XXX, 1XXX ... FXXX.</p>
+<div class="code"><pre class="code d"><a id="rest_code_77223c1b364b4be989256cb26fa35271-1" name="rest_code_77223c1b364b4be989256cb26fa35271-1" href="#rest_code_77223c1b364b4be989256cb26fa35271-1"></a><span class="c1">// Decode opcode, execute, writeback, advance PC if needed</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-2" name="rest_code_77223c1b364b4be989256cb26fa35271-2" href="#rest_code_77223c1b364b4be989256cb26fa35271-2"></a><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">opcode</span><span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="mh">0xF000</span><span class="p">)</span><span class="w"> </span><span class="c1">// Check first bit of opcode</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-3" name="rest_code_77223c1b364b4be989256cb26fa35271-3" href="#rest_code_77223c1b364b4be989256cb26fa35271-3"></a><span class="p">{</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-4" name="rest_code_77223c1b364b4be989256cb26fa35271-4" href="#rest_code_77223c1b364b4be989256cb26fa35271-4"></a><span class="w">    </span><span class="c1">// Handle 0XXX</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-5" name="rest_code_77223c1b364b4be989256cb26fa35271-5" href="#rest_code_77223c1b364b4be989256cb26fa35271-5"></a><span class="w">    </span><span class="c1">// Handle 1XXX</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-6" name="rest_code_77223c1b364b4be989256cb26fa35271-6" href="#rest_code_77223c1b364b4be989256cb26fa35271-6"></a><span class="w">    </span><span class="c1">//      .</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-7" name="rest_code_77223c1b364b4be989256cb26fa35271-7" href="#rest_code_77223c1b364b4be989256cb26fa35271-7"></a><span class="w">    </span><span class="c1">//      .</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-8" name="rest_code_77223c1b364b4be989256cb26fa35271-8" href="#rest_code_77223c1b364b4be989256cb26fa35271-8"></a><span class="w">    </span><span class="c1">// Handle FXXX</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-9" name="rest_code_77223c1b364b4be989256cb26fa35271-9" href="#rest_code_77223c1b364b4be989256cb26fa35271-9"></a><span class="w">    </span><span class="k">default</span><span class="p">:</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-10" name="rest_code_77223c1b364b4be989256cb26fa35271-10" href="#rest_code_77223c1b364b4be989256cb26fa35271-10"></a><span class="p">}</span>
+</pre></div>
+<p>Note: Do not forget to increment our PC once we finished executing.</p>
+<div class="code"><pre class="code d"><a id="rest_code_52702504701b4156904a769550e9814f-1" name="rest_code_52702504701b4156904a769550e9814f-1" href="#rest_code_52702504701b4156904a769550e9814f-1"></a><span class="c1">// Since we fetch every 2-byte, we will skip by that</span>
+<a id="rest_code_52702504701b4156904a769550e9814f-2" name="rest_code_52702504701b4156904a769550e9814f-2" href="#rest_code_52702504701b4156904a769550e9814f-2"></a><span class="n">pc</span><span class="w"> </span><span class="p">+=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+</pre></div>
+<p>Let's look at a simple example at opcode <strong>1NNN</strong>. From the wikipedia page, it says that NNN is the address to jump to. We will
+extract NNN from the opcode and jump there.</p>
+<div class="code"><pre class="code d"><a id="rest_code_4dc5c29b85114648b055a9ed96fb3c32-1" name="rest_code_4dc5c29b85114648b055a9ed96fb3c32-1" href="#rest_code_4dc5c29b85114648b055a9ed96fb3c32-1"></a><span class="c1">// Handle 1XXX</span>
+<a id="rest_code_4dc5c29b85114648b055a9ed96fb3c32-2" name="rest_code_4dc5c29b85114648b055a9ed96fb3c32-2" href="#rest_code_4dc5c29b85114648b055a9ed96fb3c32-2"></a><span class="k">case</span><span class="w"> </span><span class="mh">0x1000</span><span class="p">:</span>
+<a id="rest_code_4dc5c29b85114648b055a9ed96fb3c32-3" name="rest_code_4dc5c29b85114648b055a9ed96fb3c32-3" href="#rest_code_4dc5c29b85114648b055a9ed96fb3c32-3"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">NNN</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="mh">0x0FFF</span><span class="p">;</span>
+<a id="rest_code_4dc5c29b85114648b055a9ed96fb3c32-4" name="rest_code_4dc5c29b85114648b055a9ed96fb3c32-4" href="#rest_code_4dc5c29b85114648b055a9ed96fb3c32-4"></a><span class="w">    </span><span class="n">pc</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">NNN</span><span class="p">;</span>
+<a id="rest_code_4dc5c29b85114648b055a9ed96fb3c32-5" name="rest_code_4dc5c29b85114648b055a9ed96fb3c32-5" href="#rest_code_4dc5c29b85114648b055a9ed96fb3c32-5"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+</pre></div>
+<p>Note: In this case, we do not increment our PC because we are doing a jump to that location and hence no need to increment our PC.</p>
+<p>Similarly, let's take a look at opcode <strong>2NNN</strong>. This is similar to the above instructions, but we are doing a call instead of jump,
+hence we need to store the return address of the current PC and jump to the new location, when the routine encounters a return,
+we will jump back to this current location.</p>
+<div class="code"><pre class="code d"><a id="rest_code_3398e3986b2c4ed883477755f40acd9c-1" name="rest_code_3398e3986b2c4ed883477755f40acd9c-1" href="#rest_code_3398e3986b2c4ed883477755f40acd9c-1"></a><span class="c1">// Handle 2XXX</span>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-2" name="rest_code_3398e3986b2c4ed883477755f40acd9c-2" href="#rest_code_3398e3986b2c4ed883477755f40acd9c-2"></a><span class="k">case</span><span class="w"> </span><span class="mh">0x2000</span><span class="p">:</span>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-3" name="rest_code_3398e3986b2c4ed883477755f40acd9c-3" href="#rest_code_3398e3986b2c4ed883477755f40acd9c-3"></a><span class="w">    </span><span class="c1">// Calls subroutine at NNN</span>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-4" name="rest_code_3398e3986b2c4ed883477755f40acd9c-4" href="#rest_code_3398e3986b2c4ed883477755f40acd9c-4"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">NNN</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="mh">0x0FFF</span><span class="p">;</span>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-5" name="rest_code_3398e3986b2c4ed883477755f40acd9c-5" href="#rest_code_3398e3986b2c4ed883477755f40acd9c-5"></a>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-6" name="rest_code_3398e3986b2c4ed883477755f40acd9c-6" href="#rest_code_3398e3986b2c4ed883477755f40acd9c-6"></a><span class="w">    </span><span class="c1">// Push current pc onto the stack</span>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-7" name="rest_code_3398e3986b2c4ed883477755f40acd9c-7" href="#rest_code_3398e3986b2c4ed883477755f40acd9c-7"></a><span class="w">    </span><span class="n">stack</span><span class="p">[</span><span class="n">stackPointer</span><span class="p">++]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">pc</span><span class="p">;</span>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-8" name="rest_code_3398e3986b2c4ed883477755f40acd9c-8" href="#rest_code_3398e3986b2c4ed883477755f40acd9c-8"></a><span class="w">    </span><span class="n">pc</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">NNN</span><span class="p">;</span>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-9" name="rest_code_3398e3986b2c4ed883477755f40acd9c-9" href="#rest_code_3398e3986b2c4ed883477755f40acd9c-9"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+</pre></div>
+<p>Lastly, we will take a look at a normal operations that involves the register. Note: we will increment the PC by 2 no matter what
+the result is. As per this opcode, it will advance the PC if the VX register is the same as the address NN.</p>
+<div class="code"><pre class="code d"><a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-1" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-1" href="#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-1"></a><span class="c1">// Handle 3XXX</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-2" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-2" href="#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-2"></a><span class="k">case</span><span class="w"> </span><span class="mh">0x3000</span><span class="p">:</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-3" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-3" href="#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-3"></a><span class="w">    </span><span class="c1">// Skips the next instruction if VX equals NN.</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-4" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-4" href="#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-4"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">(</span><span class="n">opcode</span><span class="w"> </span><span class="p">&gt;&gt;</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="mh">0x000F</span><span class="p">;</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-5" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-5" href="#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-5"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">NN</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="mh">0x00FF</span><span class="p">;</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-6" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-6" href="#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-6"></a>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-7" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-7" href="#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-7"></a><span class="w">    </span><span class="c1">// Condition for this opcode is to skip next instruction</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-8" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-8" href="#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-8"></a><span class="w">    </span><span class="c1">// if condtion is fulfilled</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-9" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-9" href="#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-9"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="n">X</span><span class="p">]</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">NN</span><span class="p">)</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-10" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-10" href="#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-10"></a><span class="w">        </span><span class="n">pc</span><span class="w"> </span><span class="p">+=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-11" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-11" href="#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-11"></a>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-12" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-12" href="#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-12"></a><span class="w">    </span><span class="c1">// Increment PC after executing this instruction</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-13" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-13" href="#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-13"></a><span class="w">    </span><span class="n">pc</span><span class="w"> </span><span class="p">+=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-14" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-14" href="#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-14"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+</pre></div>
+<p>Next, we will implement the timers. For this design, we will be printing the word BEEP however the real machine will
+play a beep sound.</p>
+<div class="code"><pre class="code d"><a id="rest_code_9430b21007264db3b772e0f951734a79-1" name="rest_code_9430b21007264db3b772e0f951734a79-1" href="#rest_code_9430b21007264db3b772e0f951734a79-1"></a><span class="c1">// Update timers.</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-2" name="rest_code_9430b21007264db3b772e0f951734a79-2" href="#rest_code_9430b21007264db3b772e0f951734a79-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">delayTimer</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-3" name="rest_code_9430b21007264db3b772e0f951734a79-3" href="#rest_code_9430b21007264db3b772e0f951734a79-3"></a><span class="w">  </span><span class="p">--</span><span class="n">delayTimer</span><span class="p">;</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-4" name="rest_code_9430b21007264db3b772e0f951734a79-4" href="#rest_code_9430b21007264db3b772e0f951734a79-4"></a>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-5" name="rest_code_9430b21007264db3b772e0f951734a79-5" href="#rest_code_9430b21007264db3b772e0f951734a79-5"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">soundTimer</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-6" name="rest_code_9430b21007264db3b772e0f951734a79-6" href="#rest_code_9430b21007264db3b772e0f951734a79-6"></a><span class="p">{</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-7" name="rest_code_9430b21007264db3b772e0f951734a79-7" href="#rest_code_9430b21007264db3b772e0f951734a79-7"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">soundTimer</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-8" name="rest_code_9430b21007264db3b772e0f951734a79-8" href="#rest_code_9430b21007264db3b772e0f951734a79-8"></a><span class="w">    </span><span class="n">writeln</span><span class="p">(</span><span class="s">"BEEP!"</span><span class="p">);</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-9" name="rest_code_9430b21007264db3b772e0f951734a79-9" href="#rest_code_9430b21007264db3b772e0f951734a79-9"></a><span class="w">  </span><span class="p">--</span><span class="n">soundTimer</span><span class="p">;</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-10" name="rest_code_9430b21007264db3b772e0f951734a79-10" href="#rest_code_9430b21007264db3b772e0f951734a79-10"></a><span class="p">}</span>
+</pre></div>
+<p>That will be what your CHIP-8 CPU will be doing in one cycle. For more examples of the opcode,
+please check out my <a class="reference external" href="https://github.com/zgoh/d_chip8">CHIP-8</a> implementation.</p>
+</section></section><section id="keys"><h2>Keys</h2>
+<p>The mapping is as follows, but you can do anything you want as long as the keypad mapping is correct.</p>
+<table>
+<thead><tr>
+<th class="head" colspan="4"><p>Keyboard</p></th>
+<th class="head"><p>=&gt;</p></th>
+<th class="head" colspan="4"><p>Keypad</p></th>
+</tr></thead>
+<tbody>
+<tr>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>3</p></td>
+<td><p>4</p></td>
+<td><p>=&gt;</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>3</p></td>
+<td><p>C</p></td>
+</tr>
+<tr>
+<td><p>Q</p></td>
+<td><p>W</p></td>
+<td><p>E</p></td>
+<td><p>R</p></td>
+<td><p>=&gt;</p></td>
+<td><p>4</p></td>
+<td><p>5</p></td>
+<td><p>6</p></td>
+<td><p>D</p></td>
+</tr>
+<tr>
+<td><p>A</p></td>
+<td><p>D</p></td>
+<td><p>D</p></td>
+<td><p>F</p></td>
+<td><p>=&gt;</p></td>
+<td><p>7</p></td>
+<td><p>8</p></td>
+<td><p>9</p></td>
+<td><p>E</p></td>
+</tr>
+<tr>
+<td><p>Z</p></td>
+<td><p>X</p></td>
+<td><p>C</p></td>
+<td><p>V</p></td>
+<td><p>=&gt;</p></td>
+<td><p>A</p></td>
+<td><p>0</p></td>
+<td><p>B</p></td>
+<td><p>F</p></td>
+</tr>
+</tbody>
+</table></section><section id="fonts"><h2>Fonts</h2>
+<p>This are the required font set data for drawing the proper fonts.</p>
+<div class="code"><pre class="code d"><a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-1" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-1" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-1"></a><span class="c1">// All the required fonts</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-2" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-2" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-2"></a><span class="kt">char</span><span class="p">[</span><span class="mi">80</span><span class="p">]</span><span class="w"> </span><span class="n">fontset</span><span class="w"> </span><span class="p">=</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-3" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-3" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-3"></a><span class="p">[</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-4" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-4" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-4"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 0</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-5" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-5" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-5"></a><span class="w">    </span><span class="mh">0x20</span><span class="p">,</span><span class="w"> </span><span class="mh">0x60</span><span class="p">,</span><span class="w"> </span><span class="mh">0x20</span><span class="p">,</span><span class="w"> </span><span class="mh">0x20</span><span class="p">,</span><span class="w"> </span><span class="mh">0x70</span><span class="p">,</span><span class="w"> </span><span class="c1">// 1</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-6" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-6" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-6"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 2</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-7" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-7" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-7"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 3</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-8" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-8" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-8"></a><span class="w">    </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="c1">// 4</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-9" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-9" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-9"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 5</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-10" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-10" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-10"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 6</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-11" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-11" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-11"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="mh">0x20</span><span class="p">,</span><span class="w"> </span><span class="mh">0x40</span><span class="p">,</span><span class="w"> </span><span class="mh">0x40</span><span class="p">,</span><span class="w"> </span><span class="c1">// 7</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-12" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-12" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-12"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 8</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-13" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-13" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-13"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 9</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-14" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-14" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-14"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="c1">// A</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-15" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-15" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-15"></a><span class="w">    </span><span class="mh">0xE0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xE0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xE0</span><span class="p">,</span><span class="w"> </span><span class="c1">// B</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-16" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-16" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-16"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// C</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-17" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-17" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-17"></a><span class="w">    </span><span class="mh">0xE0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xE0</span><span class="p">,</span><span class="w"> </span><span class="c1">// D</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-18" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-18" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-18"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// E</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-19" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-19" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-19"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="w">  </span><span class="c1">// F</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-20" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-20" href="#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-20"></a><span class="p">];</span>
+</pre></div>
+<p>These represents the sprite data, one sprite is 4 pixel wide and 5 pixel high. Note the following example,
+0xF0 truncated to 0xF because 1 sprite is 4 pixel wide (4-bits) instead.</p>
+<table>
+<thead><tr>
+<th class="head" colspan="5"><p>0</p></th>
+<th class="head" colspan="5"><p>1</p></th>
+</tr></thead>
+<tbody>
+<tr>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0xF</p></td>
+<td></td>
+<td></td>
+<td><p>1</p></td>
+<td></td>
+<td><p>0x2</p></td>
+</tr>
+<tr>
+<td><p>1</p></td>
+<td></td>
+<td></td>
+<td><p>1</p></td>
+<td><p>0x9</p></td>
+<td></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td></td>
+<td><p>0x6</p></td>
+</tr>
+<tr>
+<td><p>1</p></td>
+<td></td>
+<td></td>
+<td><p>1</p></td>
+<td><p>0x9</p></td>
+<td></td>
+<td></td>
+<td><p>1</p></td>
+<td></td>
+<td><p>0x2</p></td>
+</tr>
+<tr>
+<td><p>1</p></td>
+<td></td>
+<td></td>
+<td><p>1</p></td>
+<td><p>0x9</p></td>
+<td></td>
+<td></td>
+<td><p>1</p></td>
+<td></td>
+<td><p>0x2</p></td>
+</tr>
+<tr>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0xF</p></td>
+<td></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0x7</p></td>
+</tr>
+</tbody>
+</table>
+<p>Fonts are to be loaded at initialization into memory</p>
+<div class="code"><pre class="code d"><a id="rest_code_dafddb743040417ea75ae0af1e399598-1" name="rest_code_dafddb743040417ea75ae0af1e399598-1" href="#rest_code_dafddb743040417ea75ae0af1e399598-1"></a><span class="c1">// Emulator initialization</span>
+<a id="rest_code_dafddb743040417ea75ae0af1e399598-2" name="rest_code_dafddb743040417ea75ae0af1e399598-2" href="#rest_code_dafddb743040417ea75ae0af1e399598-2"></a><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">..</span><span class="w"> </span><span class="mi">80</span><span class="p">)</span>
+<a id="rest_code_dafddb743040417ea75ae0af1e399598-3" name="rest_code_dafddb743040417ea75ae0af1e399598-3" href="#rest_code_dafddb743040417ea75ae0af1e399598-3"></a><span class="w">    </span><span class="n">memory</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">fontset</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</pre></div>
+</section><section id="conclusion"><h2>Conclusion</h2>
+<p>That's it for this guide. I hope you enjoyed it. If you are ever stuck, there are tons of resources out there, or you can head on over to my
+<a class="reference external" href="https://github.com/zgoh/d_chip8">CHIP-8</a> implementation to take a look. Have fun hacking.</p>
+<p>I think this is a good exercise to do for anybody learning about computers, especially the stuff on program counter and registers.
+I strongly encourage anybody to build a CHIP-8 virtual machine.</p>
+</section>
+</div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../porting-space-invaders-clone-from-c%2B%2B-to-d/" rel="prev" title="Porting Space Invaders clone from C++ to D">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../make-for-small-projects/" rel="next" title="Make for small projects">Next post</a>
+            </li>
+        </ul></nav></aside></article></main><footer id="footer"><div>
+                <a href="mailto:zihe.goh@gmail.com">
+                    <i class="fas fa-lg fa-at"></i>
+                </a>
+
+                <a href="https://github.com/zhgoh" target="_blank">
+                    <i class="fab fa-lg fa-github-alt"></i>
+                </a>
+
+                <a href="https://gitlab.com/zhgoh" target="_blank">
+                    <i class="fab fa-lg fa-gitlab"></i>
+                </a>
+
+                <a href="https://www.linkedin.com/in/zihegoh/" target="blank">
+                    <i class="fab fa-lg fa-linkedin"></i>
+                </a>
+
+                <a href="/Zi%20He_CV.pdf">
+                    <i class="fas fa-lg fa-file-pdf"></i>
+                </a>
+            </div>
+
+            <div>
+                <p>© 2024         <a href="mailto:zihe.goh@gmail.com">zhgoh</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            </div>
+            
+        </footer>
+</div>
+    
+            <script src="../../assets/js/baguetteBox.min.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

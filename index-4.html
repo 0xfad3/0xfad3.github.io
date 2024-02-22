@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html prefix="        og: http://ogp.me/ns# article: http://ogp.me/ns/article#     " vocab="http://ogp.me/ns" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="My general thoughts on game dev and coding">
+<meta name="viewport" content="width=device-width">
+<title>127.0.0.1 (old posts, page 4) | 127.0.0.1</title>
+<link href="assets/css/baguetteBox.min.css" rel="stylesheet" type="text/css">
+<link href="assets/css/rst_base.css" rel="stylesheet" type="text/css">
+<link href="assets/css/nikola_rst.css" rel="stylesheet" type="text/css">
+<link href="assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="assets/css/theme.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+<link href="assets/css/custom.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="rss.xml">
+<link rel="canonical" href="https://zhgoh.github.io/index-4.html">
+<link rel="prev" href="index-5.html" type="text/html">
+<link rel="next" href="index-3.html" type="text/html">
+<!--[if lt IE 9]><script src="assets/js/html5shiv-printshiv.min.js"></script><![endif]-->
+</head>
+<body>
+    <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+    <div id="container">
+         
+    <header id="header"><h1 id="brand"><a href="https://zhgoh.github.io/" title="127.0.0.1" rel="home">
+
+        <span id="blog-title">127.0.0.1</span>
+    </a></h1>
+
+        
+
+        
+    <nav id="menu"><ul>
+<li><a href="pages/about/index.html">About</a></li>
+                <li><a href="index.html">Blog</a></li>
+                <li><a href="pages/projects/index.html">Projects</a></li>
+
+    
+
+    
+    
+    </ul></nav></header><main id="content"><div class="postindex">
+    <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/getting-the-correct-voucher-code-for-my-online-shopping/" class="u-url">Getting the correct voucher code for my online shopping</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/getting-the-correct-voucher-code-for-my-online-shopping/" rel="bookmark">
+            <time class="published dt-published" datetime="2020-03-28T14:39:08+08:00" itemprop="datePublished" title="28 Mar 2020">28 Mar 2020</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>There is a online shopping platform that I always use, and just yesterday I came across an ad that caught my eye. The platform is having a
+lucky/lottery draw of some kind. The platform released a few items for grab along with a partly revealed coupon code that shoppers have to
+guess to get the item for free.</p>
+<p>An example of this was a certain bag with the voucher code 'MYBAG' was revealed and shoppers have to guess between '0000' to '9999' where the
+winning entry could be 'MYBAG26214'. On the surface this looks like a lottery ticket where shoppers can input any random numbers into the
+voucher cart redeemtion and see if they get the items discounted fully.</p>
+<p>The bright side of this so called lottery is that, there is no cost to make before making a guess. Anybody can make any amount of guess within
+the timeframe. The fastest person to guess the code will get the items. So this is a fastest winner wins competition.</p>
+<p>Being a programmer at heart, I thought this was fair game and I do not think the winner(s) will be manually typing in the voucher code to guess.
+Assuming it takes about 5 seconds to check one code, manually going at it will require 13 hours to crack it. Also randomly going at it will
+also need a long time to break the code.</p>
+<p>Knowing this, I sat myself down and thought about cracking the voucher codes. I was using the ecommerce platform on my mobile phone initially
+and so I went online and start researching how to capture the network api requests made to the server so that I can start to write a script
+that automate the sending of my voucher code to the platform to check.</p>
+<p>I admit I spent quite some time stuck at this point, and this is because I wasn't able to use intercept my app and the server to check the
+network calls that I want to analyze. After some time spent here, I realized how foolish I was going on about here. I realized the ecommerce
+platform not only have a mobile platform, it also offers a web version.</p>
+<p>I was more familar with analyzing network calls from the web browser as compared to analyzing the mobile app. I launched my browser network
+inspector tool and take a look at the request the page is making to the server to check the voucher. I found the API and tested in Insomnia
+rest framework to trim down the request further.</p>
+<p>Next I proceeded to write a simple script which sends the voucher code to the server to verify. The first version of the script is really slow,
+it sends one requests at a time to the server and this takes a long time. I have actually tried running the script and it takes a long time. I
+actually tried running the script and after 1 hour, it was still making request and it was not even halfway there.</p>
+<p>It was at this point of time, I thought about threading my script to make it faster, though I have heard that threading is really a mess in
+Python. I did some research and realized that there was a asynchronous programming model in python. I did some research and found out that
+there is a few versions of async before it was finalize in Python 3.7.</p>
+<p>I went ahead and rewrite my first version and make it an async version, mainly using aiohttp for calling the http request instead of using
+request library. This time when I ran the async version, it finished in about 5 minutes which is in magnitudes faster. When I found out the
+correct voucher code, I was so excited. I tried to key in the voucher code, and I got the dreaded message that the voucher code have been
+claimed. This only mean one thing, someone was faster than me and got to the code faster than me.</p>
+<p>To conclude, synchronous programming is easier to understand but causes a lot of busy waiting for requests to finish or file to load whereas
+asynchronous code let other request run in the background while it does other thing which makes it utilize the CPU as much as possible.
+Although, I didn't get to get anything, I learned about async programming in Python.</p>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/3dbuzz-is-closing-down/" class="u-url">3D Buzz is closing down</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/3dbuzz-is-closing-down/" rel="bookmark">
+            <time class="published dt-published" datetime="2020-01-12T11:35:58+08:00" itemprop="datePublished" title="12 Jan 2020">12 Jan 2020</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>A few days ago on <a class="reference external" href="https://news.ycombinator.com/item?id=21982283">Hacker News</a>, I came across a post that says <a class="reference external" href="https://www.3dbuzz.com/">3D Buzz</a> is shutting down and releasing all their contents for free. This
+was a website that was quite popular for 3D tutorials and stuff.</p>
+<p>This is how it looks like when I visited, note: downloads are temporarily disabled as of current writing.</p>
+<img alt="/images/3dbuzz-is-closing-down_0.png" src="/images/3dbuzz-is-closing-down_0.png">
+<p>There are a list of courses released all available for download, so I decided this is a good exercise to write a simple scraper to download
+the resources. I wrote a simple python script that use <a class="reference external" href="https://www.crummy.com/software/BeautifulSoup/">Beautiful Soup</a> and <a class="reference external" href="https://2.python-requests.org/en/master/">Requests</a> that will download the html page of 3D Buzz and parse
+the HTML. After which it will attempt to download the contents. You can check out the project <a class="reference external" href="https://github.com/0xfe11/-3dbuzz_content_scraper">here</a>.</p>
+<p>[Update:] 3D Buzz have instead released a torrent file which is in my opinion better for such distribution.</p>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/setting-default-startup-path-in-cmder/" class="u-url">Setting default startup path in Cmder</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/setting-default-startup-path-in-cmder/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-05-01T11:21:43+08:00" itemprop="datePublished" title="01 May 2019">01 May 2019</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>Recently I have been migrating more of my applications from being portable installations to
+being managed by <a class="reference external" href="https://scoop.sh/">scoop</a>. I find that using scoop saves me a lot of time when I want to
+update the versions of my applications. So I went and remove my portable cmder installation
+and setup cmder again using scoop.</p>
+<p>As usual, first thing I usually run</p>
+<div class="code"><pre class="code batch"><a id="rest_code_110fc12a81b9451096585eed65e44b37-1" name="rest_code_110fc12a81b9451096585eed65e44b37-1" href="/posts/setting-default-startup-path-in-cmder/#rest_code_110fc12a81b9451096585eed65e44b37-1"></a>cmder.exe /registerall
+</pre></div>
+<p>to add cmder to my right click context menu. After which, I will pin cmder to the task bar.
+Now I wanted to make cmder start in a specified path everytime I open cmder from the task
+bar and I wanted cmder to open in the correct path when I click open cmder from my right
+click context menu.</p>
+<p>What I did was add the following to the target of the taskbar icon.</p>
+<div class="code"><pre class="code batch"><a id="rest_code_e5a4ab2dd5cc4766b4179d298526d288-1" name="rest_code_e5a4ab2dd5cc4766b4179d298526d288-1" href="/posts/setting-default-startup-path-in-cmder/#rest_code_e5a4ab2dd5cc4766b4179d298526d288-1"></a>/start C:\
+</pre></div>
+<p>which will make cmder start in C:by default. Hope that is useful for reference.</p>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/redmart-puzzles/" class="u-url">RedMart Puzzles</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/redmart-puzzles/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-04-16T22:11:51+08:00" itemprop="datePublished" title="16 Apr 2019">16 Apr 2019</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>A few days ago, I came across a <a class="reference external" href="http://geeks.redmart.com/2015/01/07/skiing-in-singapore-a-coding-diversion/">post</a> on RedMart and it is a really interesting programming puzzle. The puzzle itself is interesting however
+what I thought was fascinating was the fact that the solution to the puzzle would be an actual email link for you to send your cv or even
+the solutions to the puzzle.</p>
+<p>By the way, one can easily find dozens of solutions by googling the redmart skiing problem. I tried writing the solution in C++ and I ran
+into some nasty bugs, I have written a simple generator that generates random grid for me to test. I would not be providing answers since
+one can readily run one of the posted solutions online.</p>
+<p>I just want to say this is one of the most creative way to hire someone. I think this is possible for a startup where they have the flexibility
+and freedom to do this. Good luck and have fun.</p>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/a-new-look-for-my-page/" class="u-url">A new look for my page</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/a-new-look-for-my-page/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-03-27T23:28:54+08:00" itemprop="datePublished" title="27 Mar 2019">27 Mar 2019</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>How this all started was a link that I saw on Hacker News, which happens to be a post on <a class="reference external" href="https://bulma.io">Bulma</a>. <a class="reference external" href="https://bulma.io">Bulma</a> is a css framework based on
+flexbox. I thought it looked interesting and hence I took an interest. I decided to (re)build my page using the framework, just to see
+how it works. I have long wanted to have my own blog with my own skin. Previously when I was using Jekyll, I was also using an online
+theme and I wanted to have my own theme.</p>
+<p>Anyhow, I managed to create a simple page with Bulma and some sample page on how the posts looks like and such. I even contemplated on
+creating my own static generator for my bulma page. Luckily I did not went ahead with it. I realized that creating a somewhat usable
+static generator with all my needs is going to take up much time. And so, I decided to implement my new theme on Nikola.</p>
+<p>My first attempt at creating the theme was not so successful, I had try to read the documentation but I failed to understand how to create
+a theme in Nikola. I decided to look at other static generators and I decided to give Hugo a try. One thing I like about Hugo is it's
+documentations that is built and maintained by the community. It is really useful to look something up. Once I had Hugo set up, I went
+ahead and create a new empty theme and proceed to build the necessary parts.</p>
+<p>I managed to replicate the theme in Hugo and I went on to create the templates for the posts. This turned out to be tougher than I thought.
+The reason being, I was using reStructed text with Nikola and Hugo wasn't detecting my rSt files properly and I try to port my posts to
+markdown format. When I was done with that, I realized that the formatting of the text was not as nice as when generated with Nikola.</p>
+<p>At this point, I decided to try creating a Nikola theme again. The second attempt, I tried to read the theme creation tutorial and the theme
+reference. I realized that there are many useful commands and information in both documents. Also the idea of the theme inheritance kinda
+confused me a little in the beginning but I think what it means is we can copy over the templates and overwrite them any way we like.</p>
+<p>I found out that I can call</p>
+<div class="code"><pre class="code batch"><a id="rest_code_da9ed0d5839b4e49a2cb1fcd707e7336-1" name="rest_code_da9ed0d5839b4e49a2cb1fcd707e7336-1" href="/posts/a-new-look-for-my-page/#rest_code_da9ed0d5839b4e49a2cb1fcd707e7336-1"></a>nikola theme -c base.tmpl
+</pre></div>
+<p>to copy the current template from the parent which is base (by default). I found this from the theme <a class="reference external" href="https://getnikola.com/theming.html">reference</a>. The page describes the
+template that can be copied and modified. This is super useful and I copied a few templates to modify. Initially I wanted to stick to my
+original design made in bulma, I decided to go with a simplistic design instead. I like the general feel of the hack theme however there
+are a few things that I dislike and I felt like I wanted to try changing them. Thankfully, it was not too hard and I managed to get a
+somewhat nice theme out.</p>
+<p>I am currently satisfied with my simple theme. I might improve it in the future. Right now I want a blog that is distraction free and easy
+on the eyes and I think this theme has achieved that purpose.</p>
+<p>Funny how a link on Hacker News prompted me to (re)design my blog and prompted me to (almost create a static generator and) trying out a new
+static generator. Not liking it, I decided to come back to Nikola.</p>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/2018-coming-to-an-end/" class="u-url">2018 coming to an end</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/2018-coming-to-an-end/" rel="bookmark">
+            <time class="published dt-published" datetime="2018-12-19T00:04:45+08:00" itemprop="datePublished" title="19 Dec 2018">19 Dec 2018</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>It's coming to an end for 2018. In the beginning I set down some of the things I would like to achieve. Let's take a look
+at the list.</p>
+<blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Be proficient in Linux, switch to using Linux full time. ✔</dt>
+<dd><p>Not full time, however I use it on the weekends.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Learn and write some programs in Rust. ✖</dt>
+<dd><p>Although, this hasn't happen, I wrote a few programs in D.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>At least one post per month for this blog. ✔</dt>
+<dd><p>More than 12 posts in the past year. 😀</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Learn at least 3 new language this year (Rust/Go/Pascal/Dart/Red). ✔</dt>
+<dd><p>In fact I am learning D and Nim, Java.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Develop a cross platform mobile app of any sort. ✖</dt>
+<dd><p>I am learning Flutter at the moment.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Join a game jam. ✖</dt>
+<dd><p>Didn't happen due to work commitment, will try again next year.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Learn Vim properly. ✔</dt>
+<dd><p>I am re learning neovim again. Also thanks to OniVim's tutorial.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</blockquote>
+<p>I think I am actually quite proud of myself. The goals I set out to achieve this year, I have managed to cross a few
+off the list. Again, 2018 have been a really fullfilling year. Have a happy holidays and a happy new year.</p>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/game-off-2018/" class="u-url">Game Off 2018</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/game-off-2018/" rel="bookmark">
+            <time class="published dt-published" datetime="2018-11-02T21:50:46+08:00" itemprop="datePublished" title="02 Nov 2018">02 Nov 2018</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>Hi everyone, for those who are not familiar with game jams, it is basically a short period of time where participants are given a theme to work
+on something fun.</p>
+<p>The theme of this <a class="reference external" href="https://itch.io/jam/game-off-2018">jam</a> is Hybrid. I am still thinking of an idea. Hopefully I can get something tonight. As for the tools, I will be
+using <a class="reference external" href="https://www.raylib.com/">RayLib</a>.</p>
+<p>I really like the idea of a minimal framework to make my game. Also I am more comfortable using C/C++ for my game. We will see where this goes.
+I will be working on this on weekday nights and weekends (hopefully) with my commitment to work.</p>
+<p>Come back and see the game 1 month later. Happy Jamming!!</p>
+<p>Update: I was caught up in work and I procrastinated a little. I will try to do a proper game jam next time. Maybe those
+short ones.</p>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/recently-found-a-fun-editor-to-use/" class="u-url">Recently found a fun editor to use</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/recently-found-a-fun-editor-to-use/" rel="bookmark">
+            <time class="published dt-published" datetime="2018-10-06T19:34:48+08:00" itemprop="datePublished" title="06 Oct 2018">06 Oct 2018</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>Recently while I was looking to install neovim on my Manjaro Linux, I found this editor named Howl. I thought the icon looks really interesting and I decided to install it.</p>
+<p>After I installed, I had forgotten entirely about its existence until recently when I was looking through my installed apps and I found it. So what is this Howl Editor. Based on the website, it is a keyboard-centric editor that is built on LuaJit and fully programmable. Sounds very interesting.</p>
+<p>In my mind I was wondering if this was another Vim/Kakoune editor of some sort with weird keyboard shortcuts. I have not use Kakoune yet but I thought it looks somewhat like that.</p>
+<p>Anyhow, I opened the editor and started typing. It just allows me to type. Well it is not a modal editor, I am still somewhat learning my Vim. Over the years, I have tried Vim/Emacs but I always have so much trouble with it. Howl on the other hand feels really easy to learn. It has a lot of nice features and I really feel like it has a lot of potential.</p>
+<p>One thing I wish it had was native support for Windows. Currently I have seen people trying to build on Windows but with some minor issue. It is a little pity in my opinion.</p>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/make-for-small-projects/" class="u-url">Make for small projects</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/make-for-small-projects/" rel="bookmark">
+            <time class="published dt-published" datetime="2018-10-06T18:23:06+08:00" itemprop="datePublished" title="06 Oct 2018">06 Oct 2018</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>Some back story, I learned of make and makefile in my first year of my University programme. I didn't really like and understand what I was doing.</p>
+<p>I went on and picked up other kind of make/build system. Until recently, I found it quite useful to have. Here I hope to demystify a make file and hopefully you can use for your other projects.</p>
+<p>Honestly I know the title says make for small projects, it does not represent my view that make is for small projects, because make have certainly been used for large projects. I found make easy to use for small projects.</p>
+<p>To start with a simple makefile, create a file named makefile and save this inside:</p>
+<div class="code"><pre class="code makefile"><a id="rest_code_b530318af9704de29f7987112499e61e-1" name="rest_code_b530318af9704de29f7987112499e61e-1" href="/posts/make-for-small-projects/#rest_code_b530318af9704de29f7987112499e61e-1"></a><span class="nf">all</span><span class="o">:</span>
+</pre></div>
+<p>With that, you have already created your makefile. You can now type make and your terminal should say:</p>
+<div class="code"><pre class="code shell"><a id="rest_code_936a97850206473ca4d5cbb51bafc14b-1" name="rest_code_936a97850206473ca4d5cbb51bafc14b-1" href="/posts/make-for-small-projects/#rest_code_936a97850206473ca4d5cbb51bafc14b-1"></a>make:<span class="w"> </span>Nothing<span class="w"> </span>to<span class="w"> </span>be<span class="w"> </span><span class="k">done</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="s1">'all'</span>.
+</pre></div>
+<p>We see that make have finished with the message that there is nothing to do for 'all'. 'all' is a rule in this case. Make works by scanning the makefile and finding all the rules. Rules are basically a work with a colon in front. You can change the all to any word you want.</p>
+<p>What can we do with a rule, you may ask. A rule can depend on other rule and also execute certain action for each rule.</p>
+<p>For example, we can have a simple make file that builds a C source file and run it.</p>
+<div class="code"><pre class="code makefile"><a id="rest_code_8e5c9cb2ef9547a3a79ec171b3276619-1" name="rest_code_8e5c9cb2ef9547a3a79ec171b3276619-1" href="/posts/make-for-small-projects/#rest_code_8e5c9cb2ef9547a3a79ec171b3276619-1"></a><span class="nf">all</span><span class="o">:</span><span class="w"> </span><span class="n">build</span>
+<a id="rest_code_8e5c9cb2ef9547a3a79ec171b3276619-2" name="rest_code_8e5c9cb2ef9547a3a79ec171b3276619-2" href="/posts/make-for-small-projects/#rest_code_8e5c9cb2ef9547a3a79ec171b3276619-2"></a><span class="w">  </span>./main
+<a id="rest_code_8e5c9cb2ef9547a3a79ec171b3276619-3" name="rest_code_8e5c9cb2ef9547a3a79ec171b3276619-3" href="/posts/make-for-small-projects/#rest_code_8e5c9cb2ef9547a3a79ec171b3276619-3"></a>
+<a id="rest_code_8e5c9cb2ef9547a3a79ec171b3276619-4" name="rest_code_8e5c9cb2ef9547a3a79ec171b3276619-4" href="/posts/make-for-small-projects/#rest_code_8e5c9cb2ef9547a3a79ec171b3276619-4"></a><span class="nf">build</span><span class="o">:</span>
+<a id="rest_code_8e5c9cb2ef9547a3a79ec171b3276619-5" name="rest_code_8e5c9cb2ef9547a3a79ec171b3276619-5" href="/posts/make-for-small-projects/#rest_code_8e5c9cb2ef9547a3a79ec171b3276619-5"></a><span class="w">  </span>gcc<span class="w"> </span>main.c<span class="w"> </span>-o<span class="w"> </span>main
+</pre></div>
+<p>In this example, we have two rules, all and build. When you run make, it first sees the rule all, and it found out that it has a dependecy of build rule. It will then see if build has any dependecy. In this case build does not rely on any other thing as well, it will execute the gcc command. When that is done, all will move on to the next dependecy, until there is no more dependecy and execute its action which will run main.</p>
+<p>There is much more to make file than what I described here. I like to use make because it allows me to define my own set of rules and actions for example currently I am using it with nimble, a nim build and package manager. Nimble allows me to build but not run the application therefore I have a makefile to invoke nimble build and another rule to run the application.</p>
+<p>I really think it's useful than writing shell scripts/batch file. Make more today.</p>
+    </div>
+    --></article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="posts/how-to-build-a-chip-8-emulator/" class="u-url">How to build a CHIP-8 emulator?</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                zhgoh
+            </span></p>
+            <p class="dateline">
+            <a href="posts/how-to-build-a-chip-8-emulator/" rel="bookmark">
+            <time class="published dt-published" datetime="2018-08-03T10:14:04+08:00" itemprop="datePublished" title="03 Aug 2018">03 Aug 2018</time></a>
+            </p>
+        </div>
+    </header><!--
+    <div class="e-content entry-content">
+    <p>So, a couple of weeks ago, I came across this <a class="reference external" href="https://cturt.github.io/cinoop.html">post</a> which talks about making a Game Boy emulator. In the introduction,
+CHIP-8 was introduced as a first project to understand emulation. I decided to build one myself, so I have decided to reuse some
+code I had for the <a class="reference external" href="https://github.com/zgoh/d_space_invaders">Space Invaders</a>.</p>
+<p>The CHIP-8 emulation is not very hard, as suggested author in the introduction and all the
+required instructions to implement can be found in the <a class="reference external" href="https://en.wikipedia.org/wiki/CHIP-8">Wikipedia</a> page. Also I had some help about getting started with this <a class="reference external" href="http://www.multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/">guide</a>.</p>
+<p>In this guide, I will explain how to build one from scratch.</p>
+<p>Note: I would not be covering how to get the keys and drawing graphics, that would depend on the framework that you use,
+i.e. SDL, GLFW (for my case), GLUT. Also I am writing this guide in D.</p>
+<section id="what-is-chip-8">
+<h2>What is CHIP-8</h2>
+<p>It's actually a virtual machine created by Joseph Weisbecker in the mid-1970s. As such, it is actually like a mini computer that
+can run instructions and output useful results onto the screen and beep sound (more on this later).</p>
+<p>To start, we have to understand the specifications of this (virtual) machine.</p>
+</section>
+<section id="chip-8-specifications">
+<h2>CHIP-8 specifications</h2>
+<ul class="simple">
+<li><p>CPU - 2-bytes (16-bit instructions)</p></li>
+</ul>
+<div class="code"><pre class="code d"><a id="rest_code_65fc6272782c48b69e20c4bc32b2fa2d-1" name="rest_code_65fc6272782c48b69e20c4bc32b2fa2d-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_65fc6272782c48b69e20c4bc32b2fa2d-1"></a><span class="kt">ushort</span><span class="w"> </span><span class="n">pc</span><span class="p">;</span>
+</pre></div>
+<ul class="simple">
+<li><p>Opcode (instructions) - There are 35 <a class="reference external" href="https://en.wikipedia.org/wiki/CHIP-8#Opcode_table">opcodes</a> which are all 2-bytes (16-bits) long and stored big-endian.</p></li>
+</ul>
+<div class="code"><pre class="code d"><a id="rest_code_4423ab49021d44ee929a47067787e653-1" name="rest_code_4423ab49021d44ee929a47067787e653-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_4423ab49021d44ee929a47067787e653-1"></a><span class="kt">ushort</span><span class="w"> </span><span class="n">opcode</span><span class="p">;</span>
+</pre></div>
+<ul class="simple">
+<li><p>Registers - 16 1-byte (8-bit) registers, named from V0 to VF and a 2-bytes I address register.</p></li>
+</ul>
+<div class="code"><pre class="code d"><a id="rest_code_67fb3072541247d593779abca4c61ae1-1" name="rest_code_67fb3072541247d593779abca4c61ae1-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_67fb3072541247d593779abca4c61ae1-1"></a><span class="kt">char</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="w"> </span><span class="n">vreg</span><span class="p">;</span>
+<a id="rest_code_67fb3072541247d593779abca4c61ae1-2" name="rest_code_67fb3072541247d593779abca4c61ae1-2" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_67fb3072541247d593779abca4c61ae1-2"></a><span class="kt">ushort</span><span class="w"> </span><span class="n">ireg</span><span class="p">;</span>
+</pre></div>
+<ul class="simple">
+<li><p>Memory - 4K memory, where all memory locations are 1-byte (8-bit where the name is from).</p></li>
+</ul>
+<div class="code"><pre class="code d"><a id="rest_code_086ecea2b52a4733af14236ed2303afa-1" name="rest_code_086ecea2b52a4733af14236ed2303afa-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_086ecea2b52a4733af14236ed2303afa-1"></a><span class="kt">char</span><span class="p">[</span><span class="mi">4096</span><span class="p">]</span><span class="w"> </span><span class="n">memory</span><span class="p">;</span>
+</pre></div>
+<ul class="simple">
+<li><p>Stack - The stack is only used to store return addresses when subroutines are called, supports up to 16 levels of nested calls.</p></li>
+</ul>
+<div class="code"><pre class="code d"><a id="rest_code_45f04f16009c433fbaab07fe8389e373-1" name="rest_code_45f04f16009c433fbaab07fe8389e373-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_45f04f16009c433fbaab07fe8389e373-1"></a><span class="kt">ushort</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="w"> </span><span class="n">stack</span><span class="p">;</span>
+<a id="rest_code_45f04f16009c433fbaab07fe8389e373-2" name="rest_code_45f04f16009c433fbaab07fe8389e373-2" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_45f04f16009c433fbaab07fe8389e373-2"></a><span class="kt">ushort</span><span class="w"> </span><span class="n">stackPointer</span><span class="p">;</span>
+</pre></div>
+<ul class="simple">
+<li><p>Timers - Delay and Sound timers</p></li>
+</ul>
+<div class="code"><pre class="code d"><a id="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-1" name="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-1"></a><span class="c1">// Interrupts and hardware registers, CHIP-8 has none</span>
+<a id="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-2" name="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-2" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-2"></a><span class="c1">// but there are two timer that count ay 60 Hz,</span>
+<a id="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-3" name="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-3" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-3"></a><span class="c1">// will count down if set above zero.</span>
+<a id="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-4" name="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-4" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-4"></a><span class="kt">char</span><span class="w"> </span><span class="n">delayTimer</span><span class="p">;</span>
+<a id="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-5" name="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-5" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-5"></a>
+<a id="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-6" name="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-6" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-6"></a><span class="c1">// Buzzer will sound when sound timer reaches 0.</span>
+<a id="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-7" name="rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-7" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_0d86e6a8fc8f4b86bcaa5ee0e1e23ddc-7"></a><span class="kt">char</span><span class="w"> </span><span class="n">soundTimer</span><span class="p">;</span>
+</pre></div>
+<ul class="simple">
+<li><p>Screens - 64 x 32 pixels, color is monochrome. We will eventually have our Graphics API to copy this buffer and draw them on screen.</p></li>
+</ul>
+<div class="code"><pre class="code d"><a id="rest_code_016f287591af471fae3aae58c62e9812-1" name="rest_code_016f287591af471fae3aae58c62e9812-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_016f287591af471fae3aae58c62e9812-1"></a><span class="c1">// Screen size: 64 x 32 = 2048 px</span>
+<a id="rest_code_016f287591af471fae3aae58c62e9812-2" name="rest_code_016f287591af471fae3aae58c62e9812-2" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_016f287591af471fae3aae58c62e9812-2"></a><span class="k">const</span><span class="w"> </span><span class="nb">size_t</span><span class="w"> </span><span class="n">screenWidth</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">64</span><span class="p">;</span>
+<a id="rest_code_016f287591af471fae3aae58c62e9812-3" name="rest_code_016f287591af471fae3aae58c62e9812-3" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_016f287591af471fae3aae58c62e9812-3"></a><span class="k">const</span><span class="w"> </span><span class="nb">size_t</span><span class="w"> </span><span class="n">screenHeight</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">32</span><span class="p">;</span>
+<a id="rest_code_016f287591af471fae3aae58c62e9812-4" name="rest_code_016f287591af471fae3aae58c62e9812-4" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_016f287591af471fae3aae58c62e9812-4"></a><span class="kt">char</span><span class="p">[</span><span class="n">screenWidth</span><span class="w"> </span><span class="p">*</span><span class="w"> </span><span class="n">screenHeight</span><span class="p">]</span><span class="w"> </span><span class="n">screen</span><span class="p">;</span>
+</pre></div>
+</section>
+<section id="cpu">
+<h2>CPU</h2>
+<p>In one cycle of this CPU, we need to Fetch, Decode, Execute, Writeback (FDEW) as well as update the timers in the machine.</p>
+<div class="code"><pre class="code d"><a id="rest_code_f2979f247aa84a7481eb0292a2f68559-1" name="rest_code_f2979f247aa84a7481eb0292a2f68559-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_f2979f247aa84a7481eb0292a2f68559-1"></a><span class="kt">void</span><span class="w"> </span><span class="n">CPUCycle</span><span class="p">()</span>
+<a id="rest_code_f2979f247aa84a7481eb0292a2f68559-2" name="rest_code_f2979f247aa84a7481eb0292a2f68559-2" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_f2979f247aa84a7481eb0292a2f68559-2"></a><span class="p">{</span>
+<a id="rest_code_f2979f247aa84a7481eb0292a2f68559-3" name="rest_code_f2979f247aa84a7481eb0292a2f68559-3" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_f2979f247aa84a7481eb0292a2f68559-3"></a><span class="w">    </span><span class="c1">// Fetch opcode</span>
+<a id="rest_code_f2979f247aa84a7481eb0292a2f68559-4" name="rest_code_f2979f247aa84a7481eb0292a2f68559-4" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_f2979f247aa84a7481eb0292a2f68559-4"></a><span class="w">    </span><span class="c1">// Decode opcode, execute, writeback, advance PC if needed</span>
+<a id="rest_code_f2979f247aa84a7481eb0292a2f68559-5" name="rest_code_f2979f247aa84a7481eb0292a2f68559-5" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_f2979f247aa84a7481eb0292a2f68559-5"></a><span class="w">    </span><span class="c1">// Update timers.</span>
+<a id="rest_code_f2979f247aa84a7481eb0292a2f68559-6" name="rest_code_f2979f247aa84a7481eb0292a2f68559-6" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_f2979f247aa84a7481eb0292a2f68559-6"></a><span class="p">}</span>
+</pre></div>
+<p>Firstly, we will need to implement the fetching of opcode.</p>
+<section id="fetching">
+<h3>Fetching</h3>
+<p>The opcode are stored in memory 2-bytes by 2-bytes, therefore when fetching our opcode, we fetch
+from the PC and PC + 1 and combine them together to form our opcode.</p>
+<div class="code"><pre class="code d"><a id="rest_code_cb6655f825574de3a1e31d434e2e5a82-1" name="rest_code_cb6655f825574de3a1e31d434e2e5a82-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_cb6655f825574de3a1e31d434e2e5a82-1"></a><span class="c1">// Fetch opcode</span>
+<a id="rest_code_cb6655f825574de3a1e31d434e2e5a82-2" name="rest_code_cb6655f825574de3a1e31d434e2e5a82-2" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_cb6655f825574de3a1e31d434e2e5a82-2"></a><span class="n">opcode</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">memory</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span><span class="w"> </span><span class="p">&lt;&lt;</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="n">memory</span><span class="p">[</span><span class="n">pc</span><span class="w"> </span><span class="p">+</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span>
+</pre></div>
+</section>
+<section id="decode-execute-writeback">
+<h3>Decode, Execute, Writeback</h3>
+<p>After we get the opcode, we will now decipher what the instructions mean. Looking at the <a class="reference external" href="https://en.wikipedia.org/wiki/CHIP-8#Opcode_table">opcodes</a> table, we will see that
+the opcode are arranged nicely from 0XXX, 1XXX ... FXXX.</p>
+<div class="code"><pre class="code d"><a id="rest_code_77223c1b364b4be989256cb26fa35271-1" name="rest_code_77223c1b364b4be989256cb26fa35271-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_77223c1b364b4be989256cb26fa35271-1"></a><span class="c1">// Decode opcode, execute, writeback, advance PC if needed</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-2" name="rest_code_77223c1b364b4be989256cb26fa35271-2" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_77223c1b364b4be989256cb26fa35271-2"></a><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">opcode</span><span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="mh">0xF000</span><span class="p">)</span><span class="w"> </span><span class="c1">// Check first bit of opcode</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-3" name="rest_code_77223c1b364b4be989256cb26fa35271-3" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_77223c1b364b4be989256cb26fa35271-3"></a><span class="p">{</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-4" name="rest_code_77223c1b364b4be989256cb26fa35271-4" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_77223c1b364b4be989256cb26fa35271-4"></a><span class="w">    </span><span class="c1">// Handle 0XXX</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-5" name="rest_code_77223c1b364b4be989256cb26fa35271-5" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_77223c1b364b4be989256cb26fa35271-5"></a><span class="w">    </span><span class="c1">// Handle 1XXX</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-6" name="rest_code_77223c1b364b4be989256cb26fa35271-6" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_77223c1b364b4be989256cb26fa35271-6"></a><span class="w">    </span><span class="c1">//      .</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-7" name="rest_code_77223c1b364b4be989256cb26fa35271-7" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_77223c1b364b4be989256cb26fa35271-7"></a><span class="w">    </span><span class="c1">//      .</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-8" name="rest_code_77223c1b364b4be989256cb26fa35271-8" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_77223c1b364b4be989256cb26fa35271-8"></a><span class="w">    </span><span class="c1">// Handle FXXX</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-9" name="rest_code_77223c1b364b4be989256cb26fa35271-9" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_77223c1b364b4be989256cb26fa35271-9"></a><span class="w">    </span><span class="k">default</span><span class="p">:</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
+<a id="rest_code_77223c1b364b4be989256cb26fa35271-10" name="rest_code_77223c1b364b4be989256cb26fa35271-10" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_77223c1b364b4be989256cb26fa35271-10"></a><span class="p">}</span>
+</pre></div>
+<p>Note: Do not forget to increment our PC once we finished executing.</p>
+<div class="code"><pre class="code d"><a id="rest_code_52702504701b4156904a769550e9814f-1" name="rest_code_52702504701b4156904a769550e9814f-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_52702504701b4156904a769550e9814f-1"></a><span class="c1">// Since we fetch every 2-byte, we will skip by that</span>
+<a id="rest_code_52702504701b4156904a769550e9814f-2" name="rest_code_52702504701b4156904a769550e9814f-2" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_52702504701b4156904a769550e9814f-2"></a><span class="n">pc</span><span class="w"> </span><span class="p">+=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+</pre></div>
+<p>Let's look at a simple example at opcode <strong>1NNN</strong>. From the wikipedia page, it says that NNN is the address to jump to. We will
+extract NNN from the opcode and jump there.</p>
+<div class="code"><pre class="code d"><a id="rest_code_4dc5c29b85114648b055a9ed96fb3c32-1" name="rest_code_4dc5c29b85114648b055a9ed96fb3c32-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_4dc5c29b85114648b055a9ed96fb3c32-1"></a><span class="c1">// Handle 1XXX</span>
+<a id="rest_code_4dc5c29b85114648b055a9ed96fb3c32-2" name="rest_code_4dc5c29b85114648b055a9ed96fb3c32-2" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_4dc5c29b85114648b055a9ed96fb3c32-2"></a><span class="k">case</span><span class="w"> </span><span class="mh">0x1000</span><span class="p">:</span>
+<a id="rest_code_4dc5c29b85114648b055a9ed96fb3c32-3" name="rest_code_4dc5c29b85114648b055a9ed96fb3c32-3" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_4dc5c29b85114648b055a9ed96fb3c32-3"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">NNN</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="mh">0x0FFF</span><span class="p">;</span>
+<a id="rest_code_4dc5c29b85114648b055a9ed96fb3c32-4" name="rest_code_4dc5c29b85114648b055a9ed96fb3c32-4" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_4dc5c29b85114648b055a9ed96fb3c32-4"></a><span class="w">    </span><span class="n">pc</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">NNN</span><span class="p">;</span>
+<a id="rest_code_4dc5c29b85114648b055a9ed96fb3c32-5" name="rest_code_4dc5c29b85114648b055a9ed96fb3c32-5" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_4dc5c29b85114648b055a9ed96fb3c32-5"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+</pre></div>
+<p>Note: In this case, we do not increment our PC because we are doing a jump to that location and hence no need to increment our PC.</p>
+<p>Similarly, let's take a look at opcode <strong>2NNN</strong>. This is similar to the above instructions, but we are doing a call instead of jump,
+hence we need to store the return address of the current PC and jump to the new location, when the routine encounters a return,
+we will jump back to this current location.</p>
+<div class="code"><pre class="code d"><a id="rest_code_3398e3986b2c4ed883477755f40acd9c-1" name="rest_code_3398e3986b2c4ed883477755f40acd9c-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_3398e3986b2c4ed883477755f40acd9c-1"></a><span class="c1">// Handle 2XXX</span>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-2" name="rest_code_3398e3986b2c4ed883477755f40acd9c-2" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_3398e3986b2c4ed883477755f40acd9c-2"></a><span class="k">case</span><span class="w"> </span><span class="mh">0x2000</span><span class="p">:</span>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-3" name="rest_code_3398e3986b2c4ed883477755f40acd9c-3" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_3398e3986b2c4ed883477755f40acd9c-3"></a><span class="w">    </span><span class="c1">// Calls subroutine at NNN</span>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-4" name="rest_code_3398e3986b2c4ed883477755f40acd9c-4" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_3398e3986b2c4ed883477755f40acd9c-4"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">NNN</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="mh">0x0FFF</span><span class="p">;</span>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-5" name="rest_code_3398e3986b2c4ed883477755f40acd9c-5" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_3398e3986b2c4ed883477755f40acd9c-5"></a>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-6" name="rest_code_3398e3986b2c4ed883477755f40acd9c-6" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_3398e3986b2c4ed883477755f40acd9c-6"></a><span class="w">    </span><span class="c1">// Push current pc onto the stack</span>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-7" name="rest_code_3398e3986b2c4ed883477755f40acd9c-7" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_3398e3986b2c4ed883477755f40acd9c-7"></a><span class="w">    </span><span class="n">stack</span><span class="p">[</span><span class="n">stackPointer</span><span class="p">++]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">pc</span><span class="p">;</span>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-8" name="rest_code_3398e3986b2c4ed883477755f40acd9c-8" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_3398e3986b2c4ed883477755f40acd9c-8"></a><span class="w">    </span><span class="n">pc</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">NNN</span><span class="p">;</span>
+<a id="rest_code_3398e3986b2c4ed883477755f40acd9c-9" name="rest_code_3398e3986b2c4ed883477755f40acd9c-9" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_3398e3986b2c4ed883477755f40acd9c-9"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+</pre></div>
+<p>Lastly, we will take a look at a normal operations that involves the register. Note: we will increment the PC by 2 no matter what
+the result is. As per this opcode, it will advance the PC if the VX register is the same as the address NN.</p>
+<div class="code"><pre class="code d"><a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-1" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-1"></a><span class="c1">// Handle 3XXX</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-2" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-2" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-2"></a><span class="k">case</span><span class="w"> </span><span class="mh">0x3000</span><span class="p">:</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-3" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-3" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-3"></a><span class="w">    </span><span class="c1">// Skips the next instruction if VX equals NN.</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-4" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-4" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-4"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">(</span><span class="n">opcode</span><span class="w"> </span><span class="p">&gt;&gt;</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="mh">0x000F</span><span class="p">;</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-5" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-5" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-5"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">NN</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opcode</span><span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="mh">0x00FF</span><span class="p">;</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-6" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-6" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-6"></a>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-7" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-7" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-7"></a><span class="w">    </span><span class="c1">// Condition for this opcode is to skip next instruction</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-8" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-8" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-8"></a><span class="w">    </span><span class="c1">// if condtion is fulfilled</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-9" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-9" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-9"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="n">X</span><span class="p">]</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">NN</span><span class="p">)</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-10" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-10" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-10"></a><span class="w">        </span><span class="n">pc</span><span class="w"> </span><span class="p">+=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-11" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-11" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-11"></a>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-12" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-12" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-12"></a><span class="w">    </span><span class="c1">// Increment PC after executing this instruction</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-13" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-13" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-13"></a><span class="w">    </span><span class="n">pc</span><span class="w"> </span><span class="p">+=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<a id="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-14" name="rest_code_dd9627ae2d844b708f5b60de5ca7abf2-14" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dd9627ae2d844b708f5b60de5ca7abf2-14"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+</pre></div>
+<p>Next, we will implement the timers. For this design, we will be printing the word BEEP however the real machine will
+play a beep sound.</p>
+<div class="code"><pre class="code d"><a id="rest_code_9430b21007264db3b772e0f951734a79-1" name="rest_code_9430b21007264db3b772e0f951734a79-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_9430b21007264db3b772e0f951734a79-1"></a><span class="c1">// Update timers.</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-2" name="rest_code_9430b21007264db3b772e0f951734a79-2" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_9430b21007264db3b772e0f951734a79-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">delayTimer</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-3" name="rest_code_9430b21007264db3b772e0f951734a79-3" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_9430b21007264db3b772e0f951734a79-3"></a><span class="w">  </span><span class="p">--</span><span class="n">delayTimer</span><span class="p">;</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-4" name="rest_code_9430b21007264db3b772e0f951734a79-4" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_9430b21007264db3b772e0f951734a79-4"></a>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-5" name="rest_code_9430b21007264db3b772e0f951734a79-5" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_9430b21007264db3b772e0f951734a79-5"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">soundTimer</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-6" name="rest_code_9430b21007264db3b772e0f951734a79-6" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_9430b21007264db3b772e0f951734a79-6"></a><span class="p">{</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-7" name="rest_code_9430b21007264db3b772e0f951734a79-7" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_9430b21007264db3b772e0f951734a79-7"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">soundTimer</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-8" name="rest_code_9430b21007264db3b772e0f951734a79-8" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_9430b21007264db3b772e0f951734a79-8"></a><span class="w">    </span><span class="n">writeln</span><span class="p">(</span><span class="s">"BEEP!"</span><span class="p">);</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-9" name="rest_code_9430b21007264db3b772e0f951734a79-9" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_9430b21007264db3b772e0f951734a79-9"></a><span class="w">  </span><span class="p">--</span><span class="n">soundTimer</span><span class="p">;</span>
+<a id="rest_code_9430b21007264db3b772e0f951734a79-10" name="rest_code_9430b21007264db3b772e0f951734a79-10" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_9430b21007264db3b772e0f951734a79-10"></a><span class="p">}</span>
+</pre></div>
+<p>That will be what your CHIP-8 CPU will be doing in one cycle. For more examples of the opcode,
+please check out my <a class="reference external" href="https://github.com/zgoh/d_chip8">CHIP-8</a> implementation.</p>
+</section>
+</section>
+<section id="keys">
+<h2>Keys</h2>
+<p>The mapping is as follows, but you can do anything you want as long as the keypad mapping is correct.</p>
+<table>
+<thead>
+<tr><th class="head" colspan="4"><p>Keyboard</p></th>
+<th class="head"><p>=&gt;</p></th>
+<th class="head" colspan="4"><p>Keypad</p></th>
+</tr>
+</thead>
+<tbody>
+<tr><td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>3</p></td>
+<td><p>4</p></td>
+<td><p>=&gt;</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>3</p></td>
+<td><p>C</p></td>
+</tr>
+<tr><td><p>Q</p></td>
+<td><p>W</p></td>
+<td><p>E</p></td>
+<td><p>R</p></td>
+<td><p>=&gt;</p></td>
+<td><p>4</p></td>
+<td><p>5</p></td>
+<td><p>6</p></td>
+<td><p>D</p></td>
+</tr>
+<tr><td><p>A</p></td>
+<td><p>D</p></td>
+<td><p>D</p></td>
+<td><p>F</p></td>
+<td><p>=&gt;</p></td>
+<td><p>7</p></td>
+<td><p>8</p></td>
+<td><p>9</p></td>
+<td><p>E</p></td>
+</tr>
+<tr><td><p>Z</p></td>
+<td><p>X</p></td>
+<td><p>C</p></td>
+<td><p>V</p></td>
+<td><p>=&gt;</p></td>
+<td><p>A</p></td>
+<td><p>0</p></td>
+<td><p>B</p></td>
+<td><p>F</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="fonts">
+<h2>Fonts</h2>
+<p>This are the required font set data for drawing the proper fonts.</p>
+<div class="code"><pre class="code d"><a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-1" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-1"></a><span class="c1">// All the required fonts</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-2" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-2" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-2"></a><span class="kt">char</span><span class="p">[</span><span class="mi">80</span><span class="p">]</span><span class="w"> </span><span class="n">fontset</span><span class="w"> </span><span class="p">=</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-3" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-3" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-3"></a><span class="p">[</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-4" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-4" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-4"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 0</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-5" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-5" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-5"></a><span class="w">    </span><span class="mh">0x20</span><span class="p">,</span><span class="w"> </span><span class="mh">0x60</span><span class="p">,</span><span class="w"> </span><span class="mh">0x20</span><span class="p">,</span><span class="w"> </span><span class="mh">0x20</span><span class="p">,</span><span class="w"> </span><span class="mh">0x70</span><span class="p">,</span><span class="w"> </span><span class="c1">// 1</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-6" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-6" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-6"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 2</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-7" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-7" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-7"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 3</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-8" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-8" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-8"></a><span class="w">    </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="c1">// 4</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-9" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-9" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-9"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 5</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-10" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-10" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-10"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 6</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-11" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-11" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-11"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="mh">0x20</span><span class="p">,</span><span class="w"> </span><span class="mh">0x40</span><span class="p">,</span><span class="w"> </span><span class="mh">0x40</span><span class="p">,</span><span class="w"> </span><span class="c1">// 7</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-12" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-12" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-12"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 8</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-13" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-13" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-13"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x10</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 9</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-14" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-14" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-14"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="c1">// A</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-15" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-15" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-15"></a><span class="w">    </span><span class="mh">0xE0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xE0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xE0</span><span class="p">,</span><span class="w"> </span><span class="c1">// B</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-16" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-16" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-16"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// C</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-17" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-17" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-17"></a><span class="w">    </span><span class="mh">0xE0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0x90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xE0</span><span class="p">,</span><span class="w"> </span><span class="c1">// D</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-18" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-18" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-18"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="c1">// E</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-19" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-19" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-19"></a><span class="w">    </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0xF0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80</span><span class="w">  </span><span class="c1">// F</span>
+<a id="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-20" name="rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-20" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_5bde2ca8b97a4e49be7a59a4f58d5e2a-20"></a><span class="p">];</span>
+</pre></div>
+<p>These represents the sprite data, one sprite is 4 pixel wide and 5 pixel high. Note the following example,
+0xF0 truncated to 0xF because 1 sprite is 4 pixel wide (4-bits) instead.</p>
+<table>
+<thead>
+<tr><th class="head" colspan="5"><p>0</p></th>
+<th class="head" colspan="5"><p>1</p></th>
+</tr>
+</thead>
+<tbody>
+<tr><td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0xF</p></td>
+<td></td>
+<td></td>
+<td><p>1</p></td>
+<td></td>
+<td><p>0x2</p></td>
+</tr>
+<tr><td><p>1</p></td>
+<td></td>
+<td></td>
+<td><p>1</p></td>
+<td><p>0x9</p></td>
+<td></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td></td>
+<td><p>0x6</p></td>
+</tr>
+<tr><td><p>1</p></td>
+<td></td>
+<td></td>
+<td><p>1</p></td>
+<td><p>0x9</p></td>
+<td></td>
+<td></td>
+<td><p>1</p></td>
+<td></td>
+<td><p>0x2</p></td>
+</tr>
+<tr><td><p>1</p></td>
+<td></td>
+<td></td>
+<td><p>1</p></td>
+<td><p>0x9</p></td>
+<td></td>
+<td></td>
+<td><p>1</p></td>
+<td></td>
+<td><p>0x2</p></td>
+</tr>
+<tr><td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0xF</p></td>
+<td></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0x7</p></td>
+</tr>
+</tbody>
+</table>
+<p>Fonts are to be loaded at initialization into memory</p>
+<div class="code"><pre class="code d"><a id="rest_code_dafddb743040417ea75ae0af1e399598-1" name="rest_code_dafddb743040417ea75ae0af1e399598-1" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dafddb743040417ea75ae0af1e399598-1"></a><span class="c1">// Emulator initialization</span>
+<a id="rest_code_dafddb743040417ea75ae0af1e399598-2" name="rest_code_dafddb743040417ea75ae0af1e399598-2" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dafddb743040417ea75ae0af1e399598-2"></a><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">..</span><span class="w"> </span><span class="mi">80</span><span class="p">)</span>
+<a id="rest_code_dafddb743040417ea75ae0af1e399598-3" name="rest_code_dafddb743040417ea75ae0af1e399598-3" href="/posts/how-to-build-a-chip-8-emulator/#rest_code_dafddb743040417ea75ae0af1e399598-3"></a><span class="w">    </span><span class="n">memory</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">fontset</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</pre></div>
+</section>
+<section id="conclusion">
+<h2>Conclusion</h2>
+<p>That's it for this guide. I hope you enjoyed it. If you are ever stuck, there are tons of resources out there, or you can head on over to my
+<a class="reference external" href="https://github.com/zgoh/d_chip8">CHIP-8</a> implementation to take a look. Have fun hacking.</p>
+<p>I think this is a good exercise to do for anybody learning about computers, especially the stuff on program counter and registers.
+I strongly encourage anybody to build a CHIP-8 virtual machine.</p>
+</section>
+    </div>
+    --></article>
+</div>
+
+        <nav class="postindexpager"><ul class="pager">
+<li class="previous">
+                <a href="index-5.html" rel="prev">Newer posts</a>
+            </li>
+            <li class="next">
+                <a href="index-3.html" rel="next">Older posts</a>
+            </li>
+        </ul></nav></main><footer id="footer"><div>
+                <a href="mailto:zihe.goh@gmail.com">
+                    <i class="fas fa-lg fa-at"></i>
+                </a>
+
+                <a href="https://github.com/zhgoh" target="_blank">
+                    <i class="fab fa-lg fa-github-alt"></i>
+                </a>
+
+                <a href="https://gitlab.com/zhgoh" target="_blank">
+                    <i class="fab fa-lg fa-gitlab"></i>
+                </a>
+
+                <a href="https://www.linkedin.com/in/zihegoh/" target="blank">
+                    <i class="fab fa-lg fa-linkedin"></i>
+                </a>
+
+                <a href="/Zi%20He_CV.pdf">
+                    <i class="fas fa-lg fa-file-pdf"></i>
+                </a>
+            </div>
+
+            <div>
+                <p>© 2024         <a href="mailto:zihe.goh@gmail.com">zhgoh</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
+            </div>
+            
+        </footer>
+</div>
+    
+            <script src="assets/js/baguetteBox.min.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
